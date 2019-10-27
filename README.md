@@ -4,7 +4,7 @@
 
 35LOC library to use [React Hooks](https://reactjs.org/docs/hooks-intro.html) from Clojurescript.
 
-This library simply provides a few useful functions for marrying Clojure's atoms together with hooks.
+Rehook provides a few useful functions for marrying Clojure's atoms together with hooks.
 
 It exposes 5 funcitons:
 
