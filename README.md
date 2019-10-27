@@ -8,8 +8,8 @@ Rehook provides a few useful functions for marrying Clojure's atoms together wit
 
 It exposes 5 funcitons:
 
-- `use-state` wrapper over `react/useState`
-- `use-effect` wrapper over `react/useEffect`
+- `use-state` convenient wrapper over `react/useState`
+- `use-effect` convenient wrapper over `react/useEffect`
 - `use-atom` use a Clojure atom (eg, for global app state) within a component
 - `use-atom-path` like `use-atom`, except for a path into a atom (eg, `get-in`)
 - `use-atom-fn` provide custom getter/setter fns to build your own abstractions
