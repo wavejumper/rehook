@@ -46,7 +46,7 @@ By ditching the overhead of ratoms, rehook is able to provide a significant perf
       [:div {:on-click #(setter (inc val))} (str "Increment => " val)])))
 ```
 
-# What templating library should I pair it with?
+# What templating library should I pair use?
 
 You can easily integrate `rehook` with existing Hiccup templating libraries like [hicada](https://github.com/rauhs/hicada) or [sablono](https://github.com/r0man/sablono). 
 
