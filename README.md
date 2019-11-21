@@ -31,7 +31,7 @@ Through the rapid development of rehook, I have not introduced a single breaking
 
 Therefore, I aim to never introduce a single breaking change to the `rehook.core` and `rehook.dom` APIs.
 
-High level libraries like `rehook.test` -- where I am still experimenting with the API are subject to breaking change.
+High level libraries like `rehook.test` -- where I am still experimenting with the design are subject to breaking change.
 
 ## Usage
 
