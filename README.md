@@ -17,7 +17,7 @@ The core library tries to do two things:
 
 It is my hope that rehook's core API could be used to build general and domain-specific abstractions on top: eg re-frame impls, om-next style querying etc.
 
-Its modular design, and guiding philosophy have already enabled some rich tooling like rehook-test. 
+Its modular design, and guiding philosophy have already enabled some rich tooling already like rehook-test. 
 
 ## Usage
 
@@ -238,7 +238,14 @@ In this example, each component will have the hierarchy of its parents in the DO
 
 This can be incredibly useful context to pass to your logging/metrics library!
 
-# Performance / comparisons
+# Testing
+
+`rehook` promotes building applications with no singleton global state.
+ Therefore, you can treat your components as 'pure functions', as all inputs to the component are passed in as arguments.
+
+Testing (with React hooks) is a deeper topic that I will explore via a blog post in the coming months. Please check back!
+
+# Benchmarking
 
 This [repo](https://github.com/wavejumper/rehook-examples/tree/master/src/rehook/benchmark) benchmarks rendering todovc (found in Reagent's [examples](https://github.com/reagent-project/reagent/tree/master/examples/todomvc)) against two other implementations:
 
@@ -265,9 +272,3 @@ Observations:
  * todomvc reimplementations try to stay as close to the original as possible. That means the implementations shouldn't be seen as a reference on how you should actually write a Cljs app with React hooks. 
  * In a real world React app, IMO performance boils down to cascading re-renders of child components. This will be entirely dependant on how you've modelled your data (and how your component tree is structured to consume that data). The above benchmark is incredibly naive, but nicely illustrates the performance overhead of templating.
 
-# Testing
-
-`rehook` promotes building applications with no singleton global state.
- Therefore, you can treat your components as 'pure functions', as all inputs to the component are passed in as arguments.
-
-Testing (with React hooks) is a deeper topic that I will explore via a blog post in the coming months. Please check back!
