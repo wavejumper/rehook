@@ -8,8 +8,6 @@ rehook is built from small, modular blocks - each with an explicit notion of tim
 
 As rehook is modular, each layer builds upon the last. Each layer adds a new idea: testing, syntax, devtools, patterns.
 
-If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hooks-reference.html) are a good start.
-
 The core library does two things:
 
 * marry React hooks with Clojure atoms
@@ -22,6 +20,8 @@ Its modular design, and guiding philosophy have already enabled some rich toolin
 ## Usage
 
 ## rehook.core
+
+If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hooks-reference.html) are a good start.
 
 `rehook.core` exposes 5 useful functions for state and effects:
 
