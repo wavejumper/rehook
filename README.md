@@ -37,12 +37,6 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 - `use-atom-path` like `use-atom`, except for a path into a atom (eg, `get-in`)
 - `use-atom-fn` provide custom getter/setter fns to build your own abstractions
 
-## rehook.dom 
-
-`rehook.dom` provides hiccup syntax.
-
-`rehook.dom` provides a baggage free way to pass down application context (eg, [integrant](https://github.com/weavejester/integrant) or [component](https://github.com/stuartsierra/component)) as you will see below.
-
 ## Usage
 
 ```clojure 
@@ -95,6 +89,12 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 
 * When using `use-effect`, make sure the values of `deps` pass Javascript's notion of equality! Solution: use simple values instead of complex maps.
 * Enforced via convention, React hooks and effects need to be defined at the top-level of your component (and not bound conditionally) 
+
+## rehook.dom 
+
+`rehook.dom` provides hiccup syntax.
+
+`rehook.dom` provides a baggage free way to pass down application context (eg, [integrant](https://github.com/weavejester/integrant) or [component](https://github.com/stuartsierra/component)) as you will see below.
 
 ## defui 
 
