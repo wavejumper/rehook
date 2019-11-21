@@ -23,6 +23,16 @@ Its modular design, and guiding philosophy have already enabled some rich toolin
 * [todomvc]()
 * [rehook-test]()
 
+## Maturity
+
+rehook is still a young project - though the core API is fairly mature. 
+
+Through the rapid development of rehook, I have not introduced a single breaking change in the process! This is largely due to its lean surface area and modular design. 
+
+Therefore, I aim to never introduce a single breaking change to the `rehook.core` and `rehook.dom` APIs.
+
+High level libraries like `rehook.test` -- where I am still experimenting with the API are subject to breaking change.
+
 ## Usage
 
 ## rehook.core
