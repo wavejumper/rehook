@@ -238,12 +238,34 @@ In this example, each component will have the hierarchy of its parents in the DO
 
 This can be incredibly useful context to pass to your logging/metrics library!
 
-# Testing
+## Testing
 
-`rehook` promotes building applications with no singleton global state.
- Therefore, you can treat your components as 'pure functions', as all inputs to the component are passed in as arguments.
+rehook allows you to test your entire application - from data layer to view. 
 
-Testing (with React hooks) is a deeper topic that I will explore via a blog post in the coming months. Please check back!
+How? Because `rehook` promotes building applications with no singleton global state. Therefore, you can treat your components as 'pure functions', as all inputs to the component are passed in as arguments.
+
+rehook-test supports:
+
+* server, react-dom and react-native
+* cljs.test + nodejs target for headless/CI
+* browser for devcards-like interactive development
+* whatever else you can think of. it's just a function call really.
+ 
+### rehook-test
+
+![image](https://i.imgur.com/zQEwOjX.png)
+
+A demo of rehook-test in action.
+
+### Time-travel driven development
+
+Writing tests for rehook is not dissimilar to how you might test with datomic or kafka's TopologyTestDriver, with a bit of devcards in the mix.
+
+Each state change produces a snapshot in time that rehook captures as a 'scene'.
+
+Like kafka's ToplogyTestDriver, the tests run in a simulated library runtime.
+
+However, a read-only snapshot of the dom is rendered for each scene! This allows you to catch any runtime errors caused by invalid inputs for each re-render.
 
 # Benchmarking
 
