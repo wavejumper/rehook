@@ -8,16 +8,16 @@ rehook is built from small, modular blocks - each with an explicit notion of tim
 
 As rehook is modular, each layer builds upon the last. Each layer adds a new idea: testing, syntax, devtools, patterns.
 
-If you need a primer on what React hooks, the [API docs](https://reactjs.org/docs/hooks-reference.html) are a good start.
+If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hooks-reference.html) are a good start.
 
-The core library tries to do two things:
+The core library does two things:
 
-* marry react hooks with Clojure atoms
-* avoid singleton state
+* marry React hooks with Clojure atoms
+* avoids singleton state
 
-It is my hope that rehook's core API could be used to build general and domain-specific abstractions on top: eg re-frame impls, om-next style querying etc.
+It is my hope that rehook's core API could be used to build general and domain-specific abstractions on top: eg re-frame, om-next style querying etc.
 
-Its modular design, and guiding philosophy have already enabled some rich tooling already like rehook-test. 
+Its modular design, and guiding philosophy have already enabled some rich tooling already like [rehook-test](#testing). 
 
 ## Usage
 
@@ -253,9 +253,15 @@ rehook-test supports:
  
 ### rehook-test
 
-![image](https://i.imgur.com/zQEwOjX.png)
+Write tests using the ever-familiar `cljs.test`:
 
-A demo of rehook-test in action.
+```clojure
+(deftest my-ui-test)
+```
+
+And get this:
+
+![image](https://i.imgur.com/zQEwOjX.png)
 
 ### Time-travel driven development
 
