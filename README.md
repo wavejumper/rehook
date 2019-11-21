@@ -17,6 +17,12 @@ It is my hope that rehook's core API could be used to build general and domain-s
 
 Its modular design, and guiding philosophy have already enabled some rich tooling already like [rehook-test](#testing). 
 
+## Example apps
+
+* [reax-synth](https://github.com/wavejumper/reax/tree/master/examples/synth) -- react native oscillator (demos re-frame like abstractions, integrant, etc)
+* [todomvc]()
+* [rehook-test]()
+
 ## Usage
 
 ## rehook.core
