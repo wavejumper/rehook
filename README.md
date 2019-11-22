@@ -277,17 +277,97 @@ Write tests using the ever-familiar `cljs.test`:
 
 And get this:
 
-![image](https://i.imgur.com/zQEwOjX.png)
+![image](https://i.imgur.com/0ufvM6u.png)
+
+And headless node cljs tests!
+
+![image](https://i.imgur.com/35ehUrd.png)
 
 ### Time-travel driven development
 
-Writing tests for rehook is not dissimilar to how you might test with datomic or kafka's TopologyTestDriver, with a bit of devcards in the mix.
+Writing tests for rehook is not dissimilar to how you might test with [datomic](https://www.datomic.com/) or kafka's [TopologyTestDriver](https://kafka.apache.org/11/documentation/streams/developer-guide/testing.html), with a bit of [devcards](https://github.com/bhauman/devcards) in the mix.
 
 Each state change produces a snapshot in time that rehook captures as a 'scene'.
 
 Like kafka's ToplogyTestDriver, the tests run in a simulated library runtime.
 
-However, a read-only snapshot of the dom is rendered for each scene! This allows you to catch any runtime errors caused by invalid inputs for each re-render.
+However, a read-only snapshot of the dom is rendered for each scene (as you can see above)! 
+
+This allows you to catch any runtime errors caused by invalid inputs for each re-render.
+
+## rehook.test API
+
+`rehook.test` wraps the [cljs.test](https://clojurescript.org/tools/testing) API with a bit of additional syntactic sugar. 
+
+This means rehook tests simply compile to something `cljs.test` understands. 
+
+```clojure
+(ns todo-test
+  (:require [rehook.test :as rehook.test :refer-macros [with-component-mounted defuitest is io]]
+            [rehook.demo.todo :as todo]))
+
+(defuitest todo-stats--items-left
+  [scenes {:system      todo/system
+           :system/args []
+           :shutdown-f  identity
+           :ctx-f       identity
+           :props-f     identity
+           :component   todo/todo-stats}]
+
+  (with-component-mounted [initial-render (rehook.test/mount! scenes)]
+    (is initial-render "Initial render should show 0 items left"
+      (not= (rehook.test/children :items-left) [0 " items left"]))))
+```
+
+## rehook.test reports
+
+**Note**: the graphical test reporter only works for `react-dom` tests. It would be great to implement something similar for React Native (using simulator or otherwise)!
+
+rehook.test works great with [shadow-cljs](https://shadow-cljs.github.io/)
+
+Create a build in your `shadow-cljs.edn` file like so: 
+
+```clojure
+  {:target :browser
+   :output-dir "public/js"
+   :asset-path "/js"
+   :closure-defines {rehook.test.browser/HTML "<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"styles/todo.css\"></head><body><div></div></body></html>" ;; optional, the initial DOM html (eg, the index.html of your app)
+                     rehook.test/target "app" ;; optional, the div id where rehook.test's report renders
+                     rehook.test/domheight 400} ;; optional, the dom preview's iframe height
+   :devtools {:before-load rehook.test/clear-registry!} ;; add this if using hot reload
+   :modules {:main {:entries [rehook.test.browser
+                              todo-test] ;; <-- your test nses go here...
+                    :init-fn rehook.test.browser/report}}
+   :release {:compiler-options {:optimizations :simple}}}
+```
+
+And you are done! 
+
+```
+shadow-cljs watch :my-build-id
+```
+
+Will render your test report. As you update your test/application code, the report will also update!
+
+## rehook.test headless
+
+Add a build in your `shadow-cljs.edn` file like so:
+
+```
+{:target    :node-test
+ :output-to "out/test.js"}
+```
+
+And you are don!
+
+```
+shadow-cljs compile :my-build-id
+node out/test.js
+```
+
+Will run your headless tests
+
+## rehook.test TODOs
 
 # Benchmarking
 
