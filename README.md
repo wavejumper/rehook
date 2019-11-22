@@ -100,6 +100,8 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 * When using `use-effect`, make sure the values of `deps` pass Javascript's notion of equality! Solution: use simple values instead of complex maps.
 * Enforced via convention, React hooks and effects need to be defined at the top-level of your component (and not bound conditionally) 
 
+# Components
+
 ## rehook.dom 
 
 `rehook.dom` provides hiccup syntax.
@@ -266,16 +268,18 @@ rehook-test supports:
 * cljs.test + nodejs target for headless/CI
 * browser for devcards-like interactive development
 * whatever else you can think of. it's just a function call really.
+
+# rehook-test
+
+## Demo
+
+A demo report generated from rehook's own todomvc tests can be found [here](https://crowley.kibu.com.au/rehook/)
  
-### rehook-test
+## Preview
 
-Write tests using the ever-familiar `cljs.test`:
+`rehook-test` comes with what is likely the most powerful Clojurescript test/dev tool around!
 
-```clojure
-(deftest my-ui-test)
-```
-
-And get this:
+Write tests, and get reports like this:
 
 ![image](https://i.imgur.com/0ufvM6u.png)
 
@@ -283,7 +287,7 @@ And headless node cljs tests!
 
 ![image](https://i.imgur.com/35ehUrd.png)
 
-### Time-travel driven development
+## Time-travel driven development
 
 Writing tests for rehook is not dissimilar to how you might test with [datomic](https://www.datomic.com/) or kafka's [TopologyTestDriver](https://kafka.apache.org/11/documentation/streams/developer-guide/testing.html), with a bit of [devcards](https://github.com/bhauman/devcards) in the mix.
 
