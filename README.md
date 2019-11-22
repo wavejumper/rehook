@@ -301,7 +301,7 @@ This allows you to catch any runtime errors caused by invalid inputs for each re
 
 `rehook.test` wraps the [cljs.test](https://clojurescript.org/tools/testing) API with a bit of additional syntactic sugar. 
 
-This means rehook tests simply compile to something `cljs.test` understands. 
+Meaning rehook tests compile to something `cljs.test` understands. 
 
 ```clojure
 (ns todo-test
@@ -333,8 +333,8 @@ Create a build in your `shadow-cljs.edn` file like so:
   {:target :browser
    :output-dir "public/js"
    :asset-path "/js"
-   :closure-defines {rehook.test.browser/HTML "<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"styles/todo.css\"></head><body><div></div></body></html>" ;; optional, the initial DOM html (eg, the index.html of your app)
-                     rehook.test/target "app" ;; optional, the div id where rehook.test's report renders
+   :closure-defines {rehook.test.browser/HTML "<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"styles/todo.css\"></head><body><div></div></body></html>" ;; optional, the initial DOM html (eg, the index.html of your actual app)
+                     rehook.test/target "app" ;; optional, the div id where rehook's report renders
                      rehook.test/domheight 400} ;; optional, the dom preview's iframe height
    :devtools {:before-load rehook.test/clear-registry!} ;; add this if using hot reload
    :modules {:main {:entries [rehook.test.browser
@@ -360,7 +360,7 @@ Add a build in your `shadow-cljs.edn` file like so:
  :output-to "out/test.js"}
 ```
 
-And you are don!
+And you are done!
 
 ```
 shadow-cljs compile :my-build-id
