@@ -258,7 +258,7 @@ This can be incredibly useful context to pass to your logging/metrics library!
 
 ## Testing
 
-rehook allows you to test your entire application - from data layer to view. 
+rehook allows you to test your entire application - from data layer to view.
 
 How? Because `rehook` promotes building applications with no singleton global state. Therefore, you can treat your components as 'pure functions', as all inputs to the component are passed in as arguments.
 
@@ -275,9 +275,7 @@ rehook-test supports:
 
 A demo report generated from rehook's own todomvc tests can be found [here](https://crowley.kibu.com.au/rehook/)
  
-## Preview
-
-`rehook-test` comes with what is likely the most powerful Clojurescript test/dev tool around!
+## Screenshots
 
 Write tests, and get reports like this:
 
