@@ -256,6 +256,29 @@ In this example, each component will have the hierarchy of its parents in the DO
 
 This can be incredibly useful context to pass to your logging/metrics library!
 
+## Linting / editor integration
+
+### cursive
+
+* `rehook.dom/defui` -- resolve as defn, indentation as `indent`
+* `rehook.dom/ui` -- resolve as fn, indentation as `indent`
+* `rehook.dom/defuitest` -- resolve as defn, indentation as `indent`
+* `rehook.test/io` -- indentation as `2`
+* `rehook.test/is` -- indentation as `2`
+
+### cljfmt
+
+Add this to your cljfmt config:
+
+```clojure
+{}
+```
+
+### clj-kondo (calva/etc)
+
+Add this to your `...edn` file:
+
+
 ## Testing
 
 rehook allows you to test your entire application - from data layer to view.
@@ -371,30 +394,4 @@ Will run your headless tests
 
 ## rehook.test TODOs
 
-# Benchmarking
-
-This [repo](https://github.com/wavejumper/rehook-examples/tree/master/src/rehook/benchmark) benchmarks rendering todovc (found in Reagent's [examples](https://github.com/reagent-project/reagent/tree/master/examples/todomvc)) against two other implementations:
-
-* `rehook-dom`: todomvc rewritten to use [rehook](https://github.com/wavejumper/rehook) with [rehook-dom](https://github.com/wavejumper/rehook-dom)
-* `rehook-hicada`: todomvc rewritten to use [rehook](https://github.com/wavejumper/hicada) with [hicada](https://github.com/rauhs/hicada)
-* `reagent`: todomvc found in Reagent's Github repo
-
-Results:
-
-```
-reagent x 233 ops/sec ±9.95% (44 runs sampled)
-rehook-dom x 223 ops/sec ±7.53% (45 runs sampled)
-rehook-hicada x 489 ops/sec ±6.92% (47 runs sampled)
-```
-
-Observations:
-
-* It looks like you gain performance by ditching the overhead of Reagent/ratoms and using React hooks
-* It looks like you gain a lot of performance with Hicada's compile-time optimizations
-* It looks like you lose all the performance of Hicada when you use `react-dom`, though it comes out about as fast as reagent :p
-
- Two things to note:
- 
- * todomvc reimplementations try to stay as close to the original as possible. That means the implementations shouldn't be seen as a reference on how you should actually write a Cljs app with React hooks. 
- * In a real world React app, IMO performance boils down to cascading re-renders of child components. This will be entirely dependant on how you've modelled your data (and how your component tree is structured to consume that data). The above benchmark is incredibly naive, but nicely illustrates the performance overhead of templating.
 
