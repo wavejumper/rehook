@@ -458,8 +458,7 @@ Create a build in your `shadow-cljs.edn` file like so:
    :devtools {:before-load rehook.test/clear-registry!} ;; add this if using hot reload
    :modules {:main {:entries [rehook.test.browser
                               todo-test] ;; <-- your test nses go here...
-                    :init-fn rehook.test.browser/report}}
-   :release {:compiler-options {:optimizations :simple}}}
+                    :init-fn rehook.test.browser/report}}}
 ```
 
 And you are done! 
