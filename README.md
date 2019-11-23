@@ -23,8 +23,8 @@ Its modular design, and guiding philosophy have already enabled some rich toolin
 ## Example apps
 
 * [reax-synth](https://github.com/wavejumper/reax/tree/master/examples/synth) -- react native oscillator (demos re-frame like abstractions, integrant, etc)
-* [todomvc]()
-* [rehook-test]()
+* [todomvc](https://github.com/wavejumper/rehook/tree/master/examples/todomvc)
+* [rehook-test](https://github.com/wavejumper/rehook/tree/master/rehook-test)
 
 ## Maturity
 
@@ -391,12 +391,12 @@ This means rehook tests compile to something `cljs.test` understands!
          (nil? (rehook.test/children :clear-completed)))))
 ```
 
-We use the `->` threading macro to chain our tests.
+The `->` threading macro to chain our tests.
 
-We write tests using two basic primitives:
+Writing tests consists of using two basic primitives:
 
 * `rehook.test/io` - wrapping any side-effects that will trigger a re-render (such as DOM events, HTTP calls, etc)
-* `rehook.test/is` - like `cljs.test/is`, this is how we write assertions for the current render
+* `rehook.test/is` - like `cljs.test/is`, this is how you write assertions for the current render
 
 Each test body (consisting of `is` and `io`) is scoped to a 'snapshot' of a render:
 
@@ -408,8 +408,8 @@ Each test body (consisting of `is` and `io`) is scoped to a 'snapshot' of a rend
 `rehook.test/defuitest` takes in a map describing your application:
 
 ```clojure
-{:system   todo/system ;; <-- your ctx constructor, eg ig/init
- :system/args [] ;; <-- any arguments to your ctx constructor
+{:system      todo/system ;; <-- your ctx constructor, eg ig/init
+ :system-args [] ;; <-- any arguments to your ctx constructor
  :shutdown-f  identity ;; <-- called after the test has finished, eg ig/halt!
  :ctx-f       identity ;; <-- likely the same ctx-f passed into your applications bootstrap call
  :props-f     identity ;; <-- likely the same props-f passed into your applications bootstrap call
@@ -418,7 +418,7 @@ Each test body (consisting of `is` and `io`) is scoped to a 'snapshot' of a rend
 
 ## Instrumenting the DOM
 
-We add a **unique** key named `:rehook/id` to the props of any component we want to instrument:
+Add a **unique** key named `:rehook/id` to the props of any component you want to instrument:
 
 ```clojure
 [:div {:rehook/id :my-unique-key} "I will be instrumented!"]
@@ -426,7 +426,7 @@ We add a **unique** key named `:rehook/id` to the props of any component we want
 
 Note: this key gets compiled out when running outside of `rehook.test`!
 
-We can then invoke props and view the props and children using the following fns:
+You can then invoke props and view the props and children using the following fns:
 
 * `rehook.test/children` - returns a collection of children
 * `rehook.test/get-prop` - returns the props of the component
@@ -458,8 +458,7 @@ Create a build in your `shadow-cljs.edn` file like so:
    :devtools {:before-load rehook.test/clear-registry!} ;; add this if using hot reload
    :modules {:main {:entries [rehook.test.browser
                               todo-test] ;; <-- your test nses go here...
-                    :init-fn rehook.test.browser/report}}
-   :release {:compiler-options {:optimizations :simple}}}
+                    :init-fn rehook.test.browser/report}}}
 ```
 
 And you are done! 
