@@ -23,7 +23,7 @@ jobs:
       - node/with-cache:
           steps:
             - run: npm install
-            - run: npm run compile headless-test
+            - run: npm run compile-test
       - run:
           command: node out/test.js
             

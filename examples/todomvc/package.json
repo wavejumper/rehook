@@ -5,7 +5,7 @@
   "author": "Thomas Crowley",
   "license": "MIT",
   "scripts": {
-    "compile": "shadow-cljs compile test"
+    "compile-test": "shadow-cljs compile headless-test"
   },
   "dependencies": {
     "global": "^4.4.0",
