@@ -273,9 +273,10 @@ This can be incredibly useful context to pass to your logging/metrics library!
 * `rehook.dom/defui` -- resolve as defn, indentation as `indent`
 * `rehook.dom/ui` -- resolve as fn, indentation as `indent`
 * `rehook.test/defuitest` -- resolve as defn, indentation as `indent`
-* `rehook.test/with-component-mounted` -- resolve as let, indent as `1`
-* `rehook.test/io` -- indentation as `2`
-* `rehook.test/is` -- indentation as `2`
+* `rehook.test/initial-render` -- indentation as `1`
+* `rehook.test/next-render` -- indentation as `1`
+* `rehook.test/io` -- indentation as `1`
+* `rehook.test/is` -- indentation as `1`
 
 ### cljfmt
 
@@ -387,7 +388,9 @@ We add a **unique** key named `:rehook/id` to the props of any component we want
 [:div {:rehook/id :my-unique-key} "I will be instrumented!"]
 ```
 
-We can then invoke props and view the props (and children) using the following fns:
+Note: this key gets compiled out when running outside of `rehook.test`!
+
+We can then invoke props and view the props and children using the following fns:
 
 * `rehook.test/children` - returns a collection of children
 * `rehook.test/get-prop` - returns the props of the component
@@ -395,12 +398,12 @@ We can then invoke props and view the props (and children) using the following f
 
 You can see these three fns in action in the demo code above.
 
-**TODO:** provide a 'synthetic' later for easily constructing mock JS events. Perhaps look to using [jsdom](https://github.com/jsdom/jsdom)?
+**TODO:** provide an easy way to construct mock JS events. Perhaps look to using [jsdom](https://github.com/jsdom/jsdom)?
 
 ## Testing the data layer
 
-* The test reports provides a way to view effects and state over time. However, this is provided only as a means of debugging. Both `use-state` and `use-effects` are implementation details - and therefore shouldn't be tested. 
-* Therefore, `rehook-test` is about testing the resulting output of the component
+* The test reports provides a way to view effects and state over time. However, this is provided only as a means of debugging. Both `use-state` and `use-effects` are implementation details - and shouldn't be tested. 
+* Therefore, `rehook-test` is about testing the resulting output of the component.
 * If you follow a re-frame like pattern of using global app state, it should be possible to inspect your subscriptions and invoke your effects using the `rehook.test` primitives. More documentation to follow.
 
 ## rehook.test reports
