@@ -18,7 +18,7 @@ The core library does two things:
 
 It is my hope that rehook's core API could be used to build general and domain-specific abstractions on top: eg re-frame, om-next style querying etc.
 
-Its modular design, and guiding philosophy have already enabled some rich tooling already like [rehook-test](#testing). 
+Its modular design, and guiding philosophy has already enabled some rich tooling like [rehook-test](#testing). 
 
 ## Example apps
 
@@ -372,12 +372,12 @@ This means rehook tests compile to something `cljs.test` understands!
             [rehook.demo.todo :as todo]))
 
 (defuitest todo-app--clear-completed
-  [scenes {:system      todo/system
-           :system/args []
-           :shutdown-f  identity
-           :ctx-f       identity
-           :props-f     identity
-           :component   todo/todo-app}]
+  [[scenes ctx] {:system      todo/system
+                 :system-args []
+                 :shutdown-f  identity
+                 :ctx-f       identity
+                 :props-f     identity
+                :component   todo/todo-app}]
 
   (-> (initial-render scenes
         (is "Initial render should show 4 TODO items"

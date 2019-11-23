@@ -1,6 +1,4 @@
-{:deps  {rehook                    {:mvn/version "2.0.3"}
-         rehook/test               {:local/root "../../rehook-test"}
-         rehook/dom                {:local/root "../../rehook-dom"}
+{:deps  {rehook                    {:mvn/version "2.0.4"}
          thheller/shadow-cljs      {:mvn/version "2.8.52"}
          org.clojure/clojure       {:mvn/version "1.10.1"}
          org.clojure/clojurescript {:mvn/version "1.10.520"}
