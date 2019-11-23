@@ -8,9 +8,10 @@ executors:
     docker:
       - image: circleci/clojure:tools-deps
     working_directory: ~/repo/examples/todomvc
+
   rehook_dom:
     docker:
-      - image: circleci/clojure:tools-deps
+      - image: circleci/clojure:lein-2.9.1
     working_directory: ~/repo/rehook-dom
 
 jobs:
@@ -30,13 +31,14 @@ jobs:
     executor: rehook_dom
     steps:
       - checkout
-      - node/install
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm run compile
-      - run:
-          command: node out/test.js
+      - restore_cache:
+          key: rehook-dom-{{ checksum "project.clj" }}
+      - run: lein deps
+      - save_cache
+          paths:
+            - ~/.m2
+          key: rehook-dom-{{ checksum "project.clj" }}
+      - run: lein test
 
 workflows:
   version: 2.1
