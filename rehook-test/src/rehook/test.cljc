@@ -74,7 +74,7 @@
 
      ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e args & children]
       (let [ctx          (ctx-transformer (ctx-f ctx e) e)
-            component-id (get args :key (:rehook.test/id ctx))
+            component-id (:rehook.test/id ctx)
             state-id     (atom 0)
             effect-id    (atom 0)]
 
