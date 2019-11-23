@@ -2,7 +2,6 @@
 
 (defmacro io [title form]
   `(do
-     (print "Called => " ~title)
      (when (nil? *report*)
        (throw (ex-info "io called outside of defuitest" {:scene *scene* :form '~form})))
 
@@ -67,31 +66,36 @@
 
 (defmacro defuitest
   [name [scenes args] & body]
-  `(do
-     (cljs.spec.alpha/assert* ::init-args ~args)
-     (defn ~(vary-meta name assoc
-                       :rehook/test? true
-                       :test `(fn []
-                                (binding [*report* (atom {:form  '~body
-                                                          :name  ~(str name)
-                                                          :tests []})]
-                                  (let [args#           ~args
-                                        system#         (:system args#)
-                                        system-args#    (or (:system-args args#) [])
-                                        invoked-system# (apply system# system-args#)
-                                        ctx-f#          (:ctx-f args#)
-                                        props-f#        (:props-f args#)
-                                        component#      (:component args#)
-                                        shutdown-f#     (or (:shutdown-f args#) identity)
-                                        scenes#         (rehook.test/init invoked-system# ctx-f# props-f# component#)
-                                        ~scenes         scenes#]
-                                    (try
-                                      ~@body
-                                      (assoc (deref *report*) :scenes (deref scenes#))
-                                      (finally
-                                        (shutdown-f# invoked-system#)))))))
-       []
-       (cljs.test/test-var (.-cljs$lang$var ~name)))
+  (let [test `(fn []
+                (binding [*report* (atom {:form  '~body
+                                          :name  ~(str name)
+                                          :tests []})]
+                  (let [args#           ~args
+                        system#         (:system args#)
+                        system-args#    (or (:system-args args#) [])
+                        invoked-system# (apply system# system-args#)
+                        ctx-f#          (:ctx-f args#)
+                        props-f#        (:props-f args#)
+                        component#      (:component args#)
+                        shutdown-f#     (or (:shutdown-f args#) identity)
+                        scenes#         (rehook.test/init invoked-system# ctx-f# props-f# component#)
+                        ~scenes scenes#]
+                    (try
+                      ~@body
+                      (assoc (deref *report*) :scenes (deref scenes#))
+                      (finally
+                        (shutdown-f# invoked-system#))))))]
+    `(do
+       (cljs.spec.alpha/assert* ::init-args ~args)
+       (defn ~(vary-meta name assoc
+                         :rehook/test? true
+                         :test test)
+         []
+         (cljs.test/test-var (.-cljs$lang$var ~name)))
 
-     (set! (.-cljs$lang$var ~name) (var ~name))
-     (swap! rehook.test/registry assoc (str (var ~name)) (var ~name))))
+       (set! (.-cljs$lang$var ~name) (var ~name))
+       (swap! rehook.test/registry assoc
+              ;; in :advanced optimisations, :test doesn't seem to be affixed
+              ;; after calling vary-meta.
+              ;; this macro is already a lil hairy, yolo, etc
+              (str (var ~name)) (assoc (meta (var ~name)) :test ~test)))))

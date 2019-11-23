@@ -7,7 +7,7 @@
    :system-args []
    :shutdown-f  #(when-let [f (some-> % meta :stop)]
                    (f))
-   :ctx-f       identity
+   :ctx-f       (fn [ctx _] ctx)
    :props-f     identity
    :component   component})
 
@@ -35,7 +35,7 @@
        (is "After clicking 'Clear completed' there should be no TODO items left"
          (nil? (rehook.test/children :clear-completed)))
 
-       #_(is "A demo of a failing test"
+       (is "A demo of a failing test"
          (= true false)))))
 
 ;; defuitest isn't limited to just top-level components!

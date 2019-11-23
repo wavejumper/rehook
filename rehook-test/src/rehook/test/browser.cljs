@@ -453,8 +453,8 @@
 (defn run-tests!
   [curr-registry test-results]
   (->> curr-registry
-       (mapv (fn [[_ var]]
-               (run-test! (meta var))))
+       (mapv (fn [[_ test-meta]]
+               (run-test! test-meta)))
        (sort-by #(str (:ns %) "-" (:name %)))
        (vec)
        (reset! test-results)))

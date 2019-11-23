@@ -215,5 +215,5 @@
      :subscribe (partial subscribe system)}))
 
 (defn main []
-  (let [elem (dom/bootstrap (ctx) identity clj->js todo-app)]
+  (let [elem (dom/bootstrap (ctx) (fn [ctx _] ctx) clj->js todo-app)]
     (react-dom/render elem (js/document.getElementById "app"))))

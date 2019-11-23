@@ -17,7 +17,8 @@
    :modules {:main {:entries [rehook.test.browser
                               todo-test]
                     :init-fn rehook.test.browser/report}}
-   :release {:compiler-options {:optimizations :simple}}}
+   :release {:compiler-options {:optimizations :simple
+                                :source-map true}}}
 
   :test
   {:target    :node-test
