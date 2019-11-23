@@ -1,6 +1,7 @@
 (ns rehook.test
-  (:require [rehook.dom :refer-macros [ui]]
-            [rehook.util :as util]
+  (:require [rehook.util :as util]
+            #?(:cljs [rehook.dom :refer-macros [ui]]
+               :clj  [rehook.dom :refer [ui]])
             #?(:cljs [rehook.core :as rehook])
             #?(:cljs [cljs.test])
             #?(:cljs [cljs.spec.alpha :as s]
@@ -13,7 +14,7 @@
 (s/def :init-args/system-args (s/coll-of any?))
 (s/def :init-args/shutdown-f fn?)
 
-(s/def ::init-args
+(s/def :defuitest/init-args
   (s/keys :req-un [:init-args/system
                    :init-args/ctx-f
                    :init-args/props-f
@@ -183,14 +184,15 @@
   ([scene id k args]
    (if-let [f (get-prop scene id k)]
      (apply f args)
-     (js/console.warn "No fn found for prop" [id k]))))
+     (throw (ex-info (str "No fn found for prop " id " on key " k)
+                     {:id id :k k :args args :scene scene})))))
 
 (defn with-props [component props]
   (ui [_ _ $]
     ($ component props)))
 
 (defn main []
-  (js/console.log "rehook.test ~~~ ♪┏(・o･)┛♪"))
+  (print "rehook.test ~~~ ♪┏(・o･)┛♪"))
 
 #?(:clj
    (defmacro io [title form]
@@ -282,7 +284,7 @@
                          (finally
                            (shutdown-f# invoked-system#))))))]
        `(do
-          (cljs.spec.alpha/assert* ::init-args ~args)
+          #_(cljs.spec.alpha/assert* :defuitest/init-args ~args)
           (defn ~(vary-meta name assoc
                             :rehook/test? true
                             :test test)
