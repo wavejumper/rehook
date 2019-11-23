@@ -10,7 +10,7 @@
 
 ;; a very naive re-frame impl containing just subscriptions and events
 (defmethod ig/init-key :rehook/reframe
-  [_ {:keys [db ctx subscriptions events]}]
+  [_ {:keys [db subscriptions events]}]
   {:subscriptions subscriptions
    :events events
    :subscribe (fn [[id & args]]
@@ -19,7 +19,7 @@
                   (js/console.warn (str "No subscription found for id " id))))
    :dispatch (fn [[id & args]]
                (if-let [handler (get events id)]
-                 (swap! db #(handler % ctx args))
+                 (swap! db #(handler % args))
                  (js/console.warn (str "No event handler found for id " id))))})
 
 (def initial-items
@@ -80,7 +80,8 @@
   {:app/db {:todos   initial-items
             :counter (count initial-items)
             :filter  :all}
-   :rehook/reframe {:events events
+   :rehook/reframe {:db (ig/ref :app/db)
+                    :events events
                     :subscriptions subscriptions}})
 
 (defui todo-input [_ props]
@@ -107,7 +108,6 @@
 
 (defui todo-stats [{:keys [dispatch subscribe]} props]
   (let [{:keys [active done]} (js->clj props :keywordize-keys true)
-        clear (:clear-done events)
         filt  (subscribe [:filter])]
     [:div {}
      [:span {:id        "todo-count"
@@ -132,7 +132,7 @@
       (when (pos? done)
         [:button {:id        "clear-completed"
                   :rehook/id :clear-completed
-                  :onClick   clear}
+                  :onClick   #(dispatch [:clear-done])}
          "Clear completed " done])]]))
 
 (defui todo-item [{:keys [dispatch]} props]
