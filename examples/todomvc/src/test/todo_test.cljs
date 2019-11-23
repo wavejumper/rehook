@@ -11,8 +11,31 @@
    :props-f     identity
    :component   component})
 
+(defuitest todo-app--data-layer
+  [[scenes {:keys [dispatch subscribe]}] (test-ctx todo/todo-app)]
+  (-> (initial-render scenes
+        (let [items (subscribe [:todos])]
+          (is "Subscription should contain 5 items"
+            (= items todo/initial-items)))
+
+        (io "Dispatch :complete-all"
+          (dispatch [:complete-all])))
+
+      (next-render
+       (let [items (subscribe [:todos])]
+         (is "After dispatching :complete-all, there should be 5 TODO items selected"
+           (every? :done (vals items))))
+
+       (io "Dispatch :clear-done"
+         (dispatch [:clear-done])))
+
+      (next-render
+       (let [items (subscribe [:todos])]
+         (is "After dispatching :clear-done, there should be no TODO items"
+           (empty? items))))))
+
 (defuitest todo-app--end-to-end
-  [scenes (test-ctx todo/todo-app)]
+  [[scenes _] (test-ctx todo/todo-app)]
   (-> (initial-render scenes
         (is "Initial render should show 5 active TODO items"
           (= (rehook.test/children :items-left)
@@ -25,7 +48,7 @@
           (rehook.test/invoke-prop :complete-all :onChange [{}])))
 
       (next-render
-       (is "After clicking 'Select all', there should be 5 TODO items selected"
+       (is "After clicking 'Complete all', there should be 5 TODO items selected"
          (= (rehook.test/children :clear-completed) ["Clear completed " 5]))
 
         (io "Invoking 'Clear completed'"
@@ -41,7 +64,7 @@
 ;; defuitest isn't limited to just top-level components!
 ;; we can test child components as well :)
 (defuitest todo-app--todo-stats
-  [scenes (test-ctx (rehook.test/with-props
+  [[scenes _] (test-ctx (rehook.test/with-props
                      todo/todo-stats
                      {:active 1 :done 1}))]
 

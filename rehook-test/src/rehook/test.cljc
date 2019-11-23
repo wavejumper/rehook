@@ -237,13 +237,24 @@
                   :title ~title
                   :pass  (if res# true false)})))))
 
+(defn use-state-identity [val]
+  [val (constantly nil)])
+
+(defn use-effect-identity
+  ([_ _]
+   (constantly nil))
+  ([_]
+   (constantly nil)))
+
 #?(:clj
    (defmacro initial-render [scenes & body]
      `(let [scenes# ~scenes
             scene#  (rehook.test/mount! scenes#)]
         (try
           (binding [*scene* scene#]
-            ~@body
+            (with-redefs [~'rehook.core/use-effect use-effect-identity
+                          ~'rehook.core/use-state  use-state-identity]
+              ~@body)
             {:prev-scene scene# :scenes scenes#})
           (finally
             (rehook.test/unmount! scene#))))))
@@ -256,14 +267,16 @@
             scene#      (rehook.test/mount! scenes# prev-scene#)]
         (try
           (binding [*scene* scene#]
-            ~@body
+            (with-redefs [~'rehook.core/use-effect use-effect-identity
+                          ~'rehook.core/use-state  use-state-identity]
+              ~@body)
             {:prev-scene scene# :scenes scenes#})
           (finally
             (rehook.test/unmount! scene#))))))
 
 #?(:clj
    (defmacro defuitest
-     [name [scenes args] & body]
+     [name [[scenes system] args] & body]
      (let [test `(fn []
                    (binding [*report* (atom {:form  '~body
                                              :name  ~(str name)
@@ -277,7 +290,8 @@
                            component#      (:component args#)
                            shutdown-f#     (or (:shutdown-f args#) identity)
                            scenes#         (rehook.test/init invoked-system# ctx-f# props-f# component#)
-                           ~scenes scenes#]
+                           ~scenes         scenes#
+                           ~system         invoked-system#]
                        (try
                          ~@body
                          (assoc (deref *report*) :scenes (deref scenes#))
