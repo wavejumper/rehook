@@ -491,4 +491,8 @@ Will run your headless tests
 
 ## rehook.test TODOs
 
-
+* Better feedback when things don't go as expected (eg, `io` call didn't cause a re-render)
+* I want Github-level diffs between the previous scene and the next scene's hiccup. [react-diff-viewer](https://github.com/praneshr/react-diff-viewer)?
+* How can we use clojure spec and perhaps property based testing to put this thing on steroids? Eg, instrument and render shrunk result
+* This tool could be used to instrument running app? Eg, reframe10x but on even more steroids :)
+* This tool **could** lint/detect various warnings/runtime problems. Eg, when a :key on a component is required, when state/effects are setup incorrectly, etc
