@@ -1,11 +1,12 @@
 (ns todo-test
   (:require [rehook.test :as rehook.test :refer-macros [defuitest is io initial-render next-render]]
-            [rehook.demo.todo :as todo]))
+            [todomvc.core :as todo]))
 
 (defn test-ctx [component]
-  {:system      todo/system
+  {:system      todo/ctx
    :system-args []
-   :shutdown-f  identity
+   :shutdown-f  #(when-let [f (some-> % meta :stop)]
+                   (f))
    :ctx-f       identity
    :props-f     identity
    :component   component})

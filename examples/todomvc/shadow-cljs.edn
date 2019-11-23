@@ -5,7 +5,8 @@
  :builds   {:browser       {:target     :browser
                             :output-to  "out/app.js"
                             :asset-path "/js"
-                            :devtools   {:preloads [devtools.preload]}
+                            :devtools   {:preloads [devtools.preload]
+                                         :after-load todomvc.core/main}
                             :modules    {:main    {:entries [todomvc.core]}
                                          :init-fn todomvc.core/main}}
 
