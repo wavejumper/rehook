@@ -336,6 +336,8 @@ This allows you to catch any runtime errors caused by invalid inputs for each re
 
 ## rehook.test API
 
+**Note:** while documentation is improving, please check out the rehook tests for a reference on how to use the API.
+
 `rehook.test` wraps the [cljs.test](https://clojurescript.org/tools/testing) API with a bit of additional syntactic sugar.
 
 This means rehook tests compile to something `cljs.test` understands!
@@ -345,7 +347,7 @@ This means rehook tests compile to something `cljs.test` understands!
   (:require [rehook.test :as rehook.test :refer-macros [defuitest is io initial-render next-render]]
             [rehook.demo.todo :as todo]))
 
-(defuitest foo
+(defuitest todo-app--clear-completed
   [scenes {:system      todo/system
            :system/args []
            :shutdown-f  identity
@@ -362,10 +364,7 @@ This means rehook tests compile to something `cljs.test` understands!
 
       (next-render
        (is "After clicking 'Clear Completed', there should be no TODO items"
-         (nil? (rehook.test/children :clear-completed)))
-
-        (io "Invoking todo-input onChange"
-          (rehook.test/invoke-prop :todo-input :onChange [(clj->js {:target {:value "foo"}})]))))
+         (nil? (rehook.test/children :clear-completed)))))
 ```
 
 We use the `->` threading macro to chain our tests.
@@ -379,6 +378,19 @@ Each test body (consisting of `is` and `io`) is scoped to a 'snapshot' of a rend
 
 * `rehook.test/initial-render` - called on our first test
 * `rehook.test/next-render` - trigger a re-render by playing any effects
+
+## defuitest
+
+`rehook.test/defuitest` takes in a map describing your application:
+
+```clojure
+{:system   todo/system ;; <-- your ctx constructor, eg ig/init
+ :system/args [] ;; <-- any arguments to your ctx constructor
+ :shutdown-f  identity ;; <-- called after the test has finished, eg ig/halt!
+ :ctx-f       identity ;; <-- likely the same ctx-f passed into your applications bootstrap call
+ :props-f     identity ;; <-- likely the same props-f passed into your applications bootstrap call
+ :component   todo/todo-app}] ;; <-- the rehook component your are writing tests for
+```
 
 ## Instrumenting the DOM
 
