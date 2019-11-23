@@ -1,9 +1,10 @@
 (ns rehook.test
-  (:require [rehook.core :as rehook]
-            [rehook.dom :refer-macros [ui]]
+  (:require [rehook.dom :refer-macros [ui]]
             [rehook.util :as util]
-            [cljs.test]
-            [cljs.spec.alpha :as s]))
+            #?(:cljs [rehook.core :as rehook])
+            #?(:cljs [cljs.test])
+            #?(:cljs [cljs.spec.alpha :as s]
+               :clj  [clojure.spec.alpha :as s])))
 
 (s/def :init-args/system fn?)
 (s/def :init-args/ctx-f fn?)
@@ -65,21 +66,26 @@
         elem)
       elem)))
 
-(defn- bootstrap
-  ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e]
-   (bootstrap next-elements next-scene scene-state effects local-state ctx ctx-f props-f e {}))
+#?(:cljs
+   (defn- bootstrap
+     ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e]
+      (bootstrap next-elements next-scene scene-state effects local-state ctx ctx-f props-f e {}))
 
-  ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e args & children]
-   (let [ctx          (ctx-transformer (ctx-f ctx e) e)
-         component-id (get args :key (:rehook.test/id ctx))
-         state-id     (atom 0)
-         effect-id    (atom 0)]
+     ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e args & children]
+      (let [ctx          (ctx-transformer (ctx-f ctx e) e)
+            component-id (get args :key (:rehook.test/id ctx))
+            state-id     (atom 0)
+            effect-id    (atom 0)]
 
-     (with-redefs [rehook/use-effect (partial use-effect effects component-id effect-id)
-                   rehook/use-state  (partial use-state scene-state local-state next-scene component-id state-id)]
+        (with-redefs [rehook/use-effect (partial use-effect effects component-id effect-id)
+                      rehook/use-state (partial use-state scene-state local-state next-scene component-id state-id)]
 
-       (let [$ (partial bootstrap next-elements next-scene scene-state effects local-state ctx ctx-f props-f)]
-         (handle-type next-elements e ctx $ (props-f args) args children))))))
+          (let [$ (partial bootstrap next-elements next-scene scene-state effects local-state ctx ctx-f props-f)]
+            (handle-type next-elements e ctx $ (props-f args) args children)))))))
+
+#?(:clj
+   (defn- bootstrap [& args]
+     (throw (ex-info "bootstrap not implemented for Clojure... yet." {:args args}))))
 
 (defn unmount! [scene]
   (doseq [[_ umount-f] (:evaled-effects scene)]
@@ -185,3 +191,107 @@
 
 (defn main []
   (js/console.log "rehook.test ~~~ ♪┏(・o･)┛♪"))
+
+#?(:clj
+   (defmacro io [title form]
+     `(do
+        (when (nil? *report*)
+          (throw (ex-info "io called outside of defuitest" {:scene *scene* :form '~form})))
+
+        (when (nil? *scene*)
+          (throw (ex-info "io called outside body of next-render or initial-render"
+                          {:report *report* :form '~form})))
+
+        (try ~form
+             (swap! *report* update :tests conj
+                    {:scene (-> *scene* :ticks dec)
+                     :form  '~form
+                     :type  :mutation
+                     :title ~title})
+             (catch js/Error e#
+               (throw (ex-info "io failed" {:scene  *scene*
+                                            :form   '~form
+                                            :report (deref *report*)}
+                               e#)))))))
+#?(:clj
+   (defmacro is [title form]
+     `(do
+        (when (nil? *report*)
+          (throw (ex-info "assertion called outside of defuitest"
+                          {:scene *scene* :form '~form})))
+
+        (when (nil? *scene*)
+          (throw (ex-info "assertion called outside body of next-render or initial-render"
+                          {:report *report* :form '~form})))
+
+        (let [res# ~form]
+          (cljs.test/testing ~title
+            (cljs.test/is res#))
+
+          (swap! *report* update :tests conj
+                 {:scene (-> *scene* :ticks dec)
+                  :form  '~form
+                  :type  :assertion
+                  :title ~title
+                  :pass  (if res# true false)})))))
+
+#?(:clj
+   (defmacro initial-render [scenes & body]
+     `(let [scenes# ~scenes
+            scene#  (rehook.test/mount! scenes#)]
+        (try
+          (binding [*scene* scene#]
+            ~@body
+            {:prev-scene scene# :scenes scenes#})
+          (finally
+            (rehook.test/unmount! scene#))))))
+
+#?(:clj
+   (defmacro next-render [prev-state & body]
+     `(let [prev-state# ~prev-state
+            scenes#     (:scenes prev-state#)
+            prev-scene# (:prev-scene prev-state#)
+            scene#      (rehook.test/mount! scenes# prev-scene#)]
+        (try
+          (binding [*scene* scene#]
+            ~@body
+            {:prev-scene scene# :scenes scenes#})
+          (finally
+            (rehook.test/unmount! scene#))))))
+
+#?(:clj
+   (defmacro defuitest
+     [name [scenes args] & body]
+     (let [test `(fn []
+                   (binding [*report* (atom {:form  '~body
+                                             :name  ~(str name)
+                                             :tests []})]
+                     (let [args#           ~args
+                           system#         (:system args#)
+                           system-args#    (or (:system-args args#) [])
+                           invoked-system# (apply system# system-args#)
+                           ctx-f#          (:ctx-f args#)
+                           props-f#        (:props-f args#)
+                           component#      (:component args#)
+                           shutdown-f#     (or (:shutdown-f args#) identity)
+                           scenes#         (rehook.test/init invoked-system# ctx-f# props-f# component#)
+                           ~scenes scenes#]
+                       (try
+                         ~@body
+                         (assoc (deref *report*) :scenes (deref scenes#))
+                         (finally
+                           (shutdown-f# invoked-system#))))))]
+       `(do
+          (cljs.spec.alpha/assert* ::init-args ~args)
+          (defn ~(vary-meta name assoc
+                            :rehook/test? true
+                            :test test)
+            []
+            (cljs.test/test-var (.-cljs$lang$var ~name)))
+
+          (set! (.-cljs$lang$var ~name) (var ~name))
+          (swap! rehook.test/registry assoc
+                 ;; in :advanced optimisations, :test doesn't seem to be affixed
+                 ;; after calling vary-meta.
+                 ;; this macro is already a lil hairy, yolo, etc
+                 (str (var ~name)) (assoc (meta (var ~name)) :test ~test))))))

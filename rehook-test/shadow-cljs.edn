@@ -6,20 +6,4 @@
  {:app
   {:target    :node-script
    :output-to "out/app.js"
-   :main      rehook.test/main}
-
-  :todomvc
-  {:target :browser
-   :output-dir "public/js"
-   :asset-path "/js"
-   :closure-defines {rehook.test.browser/HTML "<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"styles/todo.css\"></head><body><div></div></body></html>"}
-   :devtools {:preloads [devtools.preload]}
-   :modules {:main {:entries [rehook.test.browser
-                              todo-test]
-                    :init-fn rehook.test.browser/report}}
-   :release {:compiler-options {:optimizations :simple
-                                :source-map true}}}
-
-  :test
-  {:target    :node-test
-   :output-to "out/test.js"}}}
+   :main      rehook.test/main}}}
