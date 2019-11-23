@@ -4,21 +4,22 @@ orbs:
   node: circleci/node@1.1.6
 
 executors:
-  todomvc:
+  tools-deps:
     docker:
       - image: circleci/clojure:tools-deps
-    working_directory: ~/repo/examples/todomvc
+    working_directory: ~/repo
 
-  rehook_dom:
+  lein:
     docker:
       - image: circleci/clojure:lein-2.9.1
-    working_directory: ~/repo/rehook-dom
+    working_directory: ~/repo
 
 jobs:
   todomvc_test:
-    executor: todomvc
+    executor: tools-deps
     steps:
-      - checkout
+      - checkout:
+        path: ~/repo/examples/todomvc
       - node/install
       - node/with-cache:
           steps:
@@ -28,9 +29,10 @@ jobs:
           command: node out/test.js
             
   rehook_dom_test:
-    executor: rehook_dom
+    executor: lein
     steps:
-      - checkout
+      - checkout:
+        path: ~/repo/rehook-dom
       - restore_cache:
           key: rehook-dom-{{ checksum "project.clj" }}
       - run: lein deps
