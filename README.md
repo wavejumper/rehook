@@ -1,5 +1,7 @@
 # rehook
 
+[![Clojars Project](https://img.shields.io/clojars/v/rehook.svg)](https://clojars.org/rehook)
+
 Clojurescript React library enabling data-driven architecture
 
 ## About
@@ -41,6 +43,24 @@ You will need to provide your own React dependencies, eg:
 ```
 npm install --save react
 npm install --save react-dom
+```
+
+### Libraries
+
+* rehook/core - base state/effects fns
+* rehook/dom - hiccup templating DSL
+* rehook/test - test library
+
+To include one of the above libraries, add the following to your dependencies:
+
+```
+[rehook/core "2.0.0"]
+```
+
+To include all of them:
+
+```clojure
+[rehook "2.0.0"]
 ```
 
 ## Usage
