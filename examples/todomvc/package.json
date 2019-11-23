@@ -1,7 +1,7 @@
 {
-  "name": "rehook-test",
-  "description": "Test library for rehook",
-  "version": "2.0.0",
+  "name": "rehook-todomvc",
+  "description": "todomvc example using rehook",
+  "version": "1.0.0",
   "author": "Thomas Crowley",
   "license": "MIT",
   "scripts": {
@@ -11,9 +11,7 @@
     "global": "^4.4.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-error-boundary": "^1.2.5",
-    "react-frame-component": "^4.1.1",
-    "react-highlight": "^0.12.0",
     "shadow-cljs": "^2.8.52"
   }
 }
+
