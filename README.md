@@ -61,7 +61,7 @@ To include one of the above libraries, add the following to your dependencies:
 To include all of them:
 
 ```clojure
-[rehook "2.0.3]
+[rehook "2.0.3"]
 ```
 
 ## Usage
