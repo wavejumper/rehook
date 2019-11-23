@@ -1,0 +1,46 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@1.1.6
+
+executors:
+  todomvc:
+    docker:
+      - image: circleci/clojure:tools-deps
+    working_directory: ~/repo/examples/todomvc
+  rehook_dom:
+    docker:
+      - image: circleci/clojure:tools-deps
+    working_directory: ~/repo/rehook-dom
+
+jobs:
+  todomvc_test:
+    executor: todomvc
+    steps:
+      - checkout
+      - node/install
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run compile headless-test
+      - run:
+          command: node out/test.js
+            
+  rehook_dom_test:
+    executor: rehook_dom
+    steps:
+      - checkout
+      - node/install
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run compile
+      - run:
+          command: node out/test.js
+
+workflows:
+  version: 2.1
+  general_build:
+    jobs:
+      - todomvc_test
+      - rehook_dom_test
