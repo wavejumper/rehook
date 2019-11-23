@@ -128,7 +128,7 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 
 ### Hooks gotchas
 
-* When using `use-effect`, make sure the values of `deps` pass Javascript's notion of equality! Solution: use simple values instead of complex maps.
+* When using `use-effect`, make sure the values of `deps` pass JavaScript's notion of equality! Solution: use simple values instead of complex maps.
 * Enforced via convention, React hooks and effects need to be defined at the top-level of your component (and not bound conditionally) 
 
 # Components
@@ -155,7 +155,7 @@ It must return valid hiccup.
   (:require [rehook.dom :refer-macros [defui]]))
 
 (defui my-component [{:keys [dispatch]} _] 
-  [:text {:onClick #(dispatch :fire-missles)} "Fire missles!"])
+  [:text {:onClick #(dispatch :fire-missiles)} "Fire missiles!"])
 ```
 
 The anonymous counterpart is `rehook.dom/ui`
@@ -181,7 +181,7 @@ Reference the component directly:
   [child])
 ```
 
-### reactjs components
+### ReactJS components
 
 Same as rehook components. Reference the component directly:
 
@@ -257,7 +257,7 @@ You can use the `rehook.dom.native/component-provider` fn if you directly call [
     ["react-native" :refer [AppRegistry]]))
 
 (defui app [{:keys [dispatch]} _]
-  [:Text {:onPress #(dispatch :fire-missles)} "Fire missles!"])
+  [:Text {:onPress #(dispatch :fire-missiles)} "Fire missiles!"])
 
 (defn system []
   {:dispatch (fn [& _] (js/console.log "TODO: implement dispatch fn..."))})
@@ -266,7 +266,7 @@ You can use the `rehook.dom.native/component-provider` fn if you directly call [
   (.registerComponent AppRegistry "my-app" (dom/component-provider (system) app))
 ```
 
-Alternatively, if you don't have access to the `AppRegistry`, you can use the `rehook.dom.native/boostrap` fn instead - which will return a valid React element
+Alternatively, if you don't have access to the `AppRegistry`, you can use the `rehook.dom.native/bootstrap` fn instead - which will return a valid React element
 
 ## Context transformer
 
@@ -348,11 +348,11 @@ And headless node cljs tests!
 
 ## Time-travel driven development
 
-Writing tests for rehook is not dissimilar to how you might test with [datomic](https://www.datomic.com/) or kafka's [TopologyTestDriver](https://kafka.apache.org/11/documentation/streams/developer-guide/testing.html), with a bit of [devcards](https://github.com/bhauman/devcards) in the mix.
+Writing tests for rehook is not dissimilar to how you might test with [datomic](https://www.datomic.com/) or Kafka's [TopologyTestDriver](https://kafka.apache.org/11/documentation/streams/developer-guide/testing.html), with a bit of [devcards](https://github.com/bhauman/devcards) in the mix.
 
 Each state change produces a snapshot in time that rehook captures as a 'scene'.
 
-Like kafka's ToplogyTestDriver, the tests run in a simulated library runtime.
+Like Kafka's ToplogyTestDriver, the tests run in a simulated library runtime.
 
 However, a read-only snapshot of the dom is rendered for each scene (as you can see above)! 
 
