@@ -17,9 +17,10 @@ executors:
 jobs:
   todomvc_test:
     executor: tools-deps
+    working_directory: ~/repo/rehook-dom
     steps:
       - checkout:
-          path: ~/repo/examples/todomvc
+          path: ~/repo
       - node/install
       - node/with-cache:
           steps:
@@ -30,9 +31,10 @@ jobs:
             
   rehook_dom_test:
     executor: lein
+    working_directory: ~/repo/examples/todomvc
     steps:
       - checkout:
-          path: ~/repo/rehook-dom
+          path: ~/repo
       - restore_cache:
           key: rehook-dom-{{ checksum "project.clj" }}
       - run: lein deps
