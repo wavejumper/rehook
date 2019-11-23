@@ -18,7 +18,7 @@ The core library does two things:
 
 It is my hope that rehook's core API could be used to build general and domain-specific abstractions on top: eg re-frame, om-next style querying etc.
 
-Its modular design, and guiding philosophy have already enabled some rich tooling already like [rehook-test](#testing). 
+Its modular design, and guiding philosophy has already enabled some rich tooling like [rehook-test](#testing). 
 
 ## Example apps
 
