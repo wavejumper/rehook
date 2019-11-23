@@ -34,7 +34,7 @@ jobs:
       - restore_cache:
           key: rehook-dom-{{ checksum "project.clj" }}
       - run: lein deps
-      - save_cache
+      - save_cache:
           paths:
             - ~/.m2
           key: rehook-dom-{{ checksum "project.clj" }}
