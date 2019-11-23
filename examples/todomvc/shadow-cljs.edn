@@ -18,9 +18,7 @@
                                               :before-load rehook.test/clear-completed!}
                             :modules         {:main {:entries [rehook.test.browser
                                                                todo-test]
-                                                     :init-fn rehook.test.browser/report}}
-                            :release         {:compiler-options {:optimizations :simple
-                                                                 :infer-externs :auto}}}
+                                                     :init-fn rehook.test.browser/report}}}
 
             :headless-test {:target    :node-test
                             :output-to "out/test.js"}}}

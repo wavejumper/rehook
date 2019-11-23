@@ -14,8 +14,7 @@
                          ;; https://github.com/thheller/shadow-cljs/issues/488
                          [com.google.javascript/closure-compiler-unshaded "v20190325"]
                          [org.clojure/google-closure-library "0.0-20190213-2033d5d9"]
-                         [binaryage/devtools "0.9.11"]]
-          :source-paths ["src" "dev" "test"]}}
+                         [binaryage/devtools "0.9.11"]]}}
 
   :source-paths
   ["src"])

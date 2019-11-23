@@ -35,7 +35,7 @@
        (is "After clicking 'Clear completed' there should be no TODO items left"
          (nil? (rehook.test/children :clear-completed)))
 
-       (is "A demo of a failing test"
+       #_(is "A demo of a failing test"
          (= true false)))))
 
 ;; defuitest isn't limited to just top-level components!
