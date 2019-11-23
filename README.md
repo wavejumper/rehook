@@ -340,7 +340,7 @@ A demo report generated from rehook's own todomvc tests can be found [here](http
 
 Write tests, and get reports like this:
 
-![image](https://i.imgur.com/OqBBSYh.png)
+![image](https://i.imgur.com/jAbQXk9.png)
 
 And headless node cljs tests!
 
