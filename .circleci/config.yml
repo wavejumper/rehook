@@ -17,7 +17,7 @@ executors:
 jobs:
   todomvc_test:
     executor: tools-deps
-    working_directory: ~/repo/rehook-dom
+    working_directory: ~/repo/examples/todomvc
     steps:
       - checkout:
           path: ~/repo
@@ -31,7 +31,7 @@ jobs:
             
   rehook_dom_test:
     executor: lein
-    working_directory: ~/repo/examples/todomvc
+    working_directory: ~/repo/rehook-dom
     steps:
       - checkout:
           path: ~/repo
