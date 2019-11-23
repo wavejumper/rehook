@@ -326,7 +326,7 @@ Therefore, you can treat your components as 'pure functions', as all inputs to t
 rehook-test supports:
 
 * server, react-dom and react-native
-* cljs.test + nodejs target for headless/CI
+* [cljs.test + nodejs target for headless/CI](https://circleci.com/gh/wavejumper/rehook)
 * browser for devcards-like interactive development
 * whatever else you can think of. it's just a function call really.
 
@@ -360,7 +360,7 @@ This allows you to catch any runtime errors caused by invalid inputs for each re
 
 ## rehook.test API
 
-**Note:** while documentation is improving, please check out the rehook tests for a reference on how to use the API.
+**Note:** while documentation is improving, please check out the [rehook tests](https://github.com/wavejumper/rehook/tree/master/examples/todomvc/src/test) for a reference on how to use the API.
 
 `rehook.test` wraps the [cljs.test](https://clojurescript.org/tools/testing) API with a bit of additional syntactic sugar.
 
@@ -391,7 +391,7 @@ This means rehook tests compile to something `cljs.test` understands!
          (nil? (rehook.test/children :clear-completed)))))
 ```
 
-The `->` threading macro to chain our tests.
+The `->` threading macro is used to chain our tests.
 
 Writing tests consists of using two basic primitives:
 
