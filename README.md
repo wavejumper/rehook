@@ -469,7 +469,7 @@ shadow-cljs watch :my-build-id
 
 Will render your test report. As you update your test/application code, the report will also update!
 
-Inside of your `dev-http` folder 
+Inside of the folder `dev-http` serves, add a `report.html` file like [this](https://github.com/wavejumper/rehook/blob/master/examples/todomvc/public/report.html) one.
 
 ## rehook.test headless
 
