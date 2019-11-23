@@ -11,6 +11,8 @@
    :props-f     identity
    :component   component})
 
+;; This example shows how we can use the 'data layer' -- eg our dispatch and subscribe
+;; fns to write tests against our components.
 (defuitest todo-app--data-layer
   [[scenes {:keys [dispatch subscribe]}] (test-ctx todo/todo-app)]
   (-> (initial-render scenes
@@ -34,7 +36,9 @@
          (is "After dispatching :clear-done, there should be no TODO items"
            (empty? items))))))
 
-(defuitest todo-app--end-to-end
+;; This example shows how we can inspect the output of our components hiccup
+;; to write tests against our components
+(defuitest todo-app--view-layer
   [[scenes _] (test-ctx todo/todo-app)]
   (-> (initial-render scenes
         (is "Initial render should show 5 active TODO items"

@@ -210,8 +210,10 @@
        [material-icon
         {:icon (if (:pass test) "done" "highlight_off")}]]
 
-      [:div {:style {:fontWeight "1000"}}
-       (:title test)
+      [:div {}
+       [:strong {:style {:textShadow "0px 0.2px #222"
+                       :color "#F9F9F9"}}
+        (:title test)]
        [clojure-highlight {} (zpr-str (:form test) 80)]]
 
       [:div {:style {:border          "1px solid #ccc"
@@ -289,7 +291,7 @@
      [:div {:style {:width      "50px"
                     :height     "100%"
                     :alignItems "left"}}
-      [material-icon {:icon "changes"}]]
+      [material-icon {:icon "send"}]]
 
      [:div {:style {:fontWeight "1000"}}
       (:title test)
@@ -347,10 +349,10 @@
         test-str (zpr-str (first form) 80)
         assertions (filter #(= :assertion (:type %)) tests)
         pass? (and (every? :pass assertions) (not error?))
-        [show-code-snippet? set-show-code-snippet] (rehook/use-state true)
+        [show-code-snippet? set-show-code-snippet] (rehook/use-state false)
         [expanded? set-expanded] (rehook/use-state (not pass?))
         total-assertions (count assertions)
-        title (str ns "/" name ":" line
+        title (str ns "/" name
                    (if error?
                      " (1 error)"
                      (str " (" total-assertions " "

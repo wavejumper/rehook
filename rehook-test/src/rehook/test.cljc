@@ -266,6 +266,9 @@
             prev-scene# (:prev-scene prev-state#)
             scene#      (rehook.test/mount! scenes# prev-scene#)]
         (try
+          (when (= (:ticks prev-scene#) (:ticks scene#))
+            (throw (ex-info "Error while calling next-render. No re-render has occurred."
+                            {:prev-scene prev-scene# :scene scene#})))
           (binding [*scene* scene#]
             (with-redefs [~'rehook.core/use-effect use-effect-identity
                           ~'rehook.core/use-state  use-state-identity]
