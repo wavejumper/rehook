@@ -15,7 +15,7 @@ The core library does two things:
 
 It is my hope that rehook's core API could be used to build general and domain-specific abstractions on top: eg re-frame, om-next style querying etc.
 
-Its modular design, and guiding philosophy have already enabled some rich tooling like [rehook-test](#testing). 
+Its modular design, and guiding philosophy have already enabled some rich tooling already like [rehook-test](#testing). 
 
 ## Example apps
 
@@ -27,11 +27,21 @@ Its modular design, and guiding philosophy have already enabled some rich toolin
 
 rehook is still a young project - though the core API is fairly mature. 
 
-Through the rapid development of rehook, I have not introduced a single breaking change in the process! This is largely due to its lean surface area and modular design. 
+Through the rapid development of rehook, I have not introduced a single breaking change in the process! This is largely due to its lean surface area and modular design.
 
 Therefore, I aim to never introduce a single breaking change to the `rehook.core` and `rehook.dom` APIs.
 
 High level libraries like `rehook.test` -- where I am still experimenting with the design are subject to breaking change.
+
+## Installation
+
+The documentation assumes you are using [shadow-cljs](https://shadow-cljs.org/). 
+
+You will need to provide your own React dependencies, eg:
+```
+npm install --save react
+npm install --save react-dom
+```
 
 ## Usage
 
@@ -175,14 +185,14 @@ Same as rehook components. Reference the component directly:
 
 ### hiccup-free
 
-You can opt-out of the `html` macro by passing a third argument (the render fn) to `defui`:
+You can opt-out of hiuccup templating by passing a third argument (the render fn) to `defui`:
 
 ```clojure
 (defui no-html-macro [_ _ $]
   ($ :div {} "rehook-dom without hiccup!"))
 ```
 
-Because the `$` render fn is passed into every rehook component you can overload it -- or better yet create your own abstract macros!
+Because the `$` render fn is passed into every rehook component you can overload it -- or better yet create your own custom templating syntax!
 
 ## Props
 
@@ -262,7 +272,8 @@ This can be incredibly useful context to pass to your logging/metrics library!
 
 * `rehook.dom/defui` -- resolve as defn, indentation as `indent`
 * `rehook.dom/ui` -- resolve as fn, indentation as `indent`
-* `rehook.dom/defuitest` -- resolve as defn, indentation as `indent`
+* `rehook.test/defuitest` -- resolve as defn, indentation as `indent`
+* `rehook.test/with-component-mounted` -- resolve as let, indent as `1`
 * `rehook.test/io` -- indentation as `2`
 * `rehook.test/is` -- indentation as `2`
 
@@ -283,7 +294,9 @@ Add this to your `...edn` file:
 
 rehook allows you to test your entire application - from data layer to view.
 
-How? Because `rehook` promotes building applications with no singleton global state. Therefore, you can treat your components as 'pure functions', as all inputs to the component are passed in as arguments.
+How? Because `rehook` promotes building applications with no singleton global state. 
+
+Therefore, you can treat your components as 'pure functions', as all inputs to the component are passed in as arguments.
 
 rehook-test supports:
 
@@ -322,33 +335,77 @@ This allows you to catch any runtime errors caused by invalid inputs for each re
 
 ## rehook.test API
 
-`rehook.test` wraps the [cljs.test](https://clojurescript.org/tools/testing) API with a bit of additional syntactic sugar. 
+`rehook.test` wraps the [cljs.test](https://clojurescript.org/tools/testing) API with a bit of additional syntactic sugar.
 
-Meaning rehook tests compile to something `cljs.test` understands. 
+This means rehook tests compile to something `cljs.test` understands!
 
 ```clojure
 (ns todo-test
-  (:require [rehook.test :as rehook.test :refer-macros [with-component-mounted defuitest is io]]
+  (:require [rehook.test :as rehook.test :refer-macros [defuitest is io initial-render next-render]]
             [rehook.demo.todo :as todo]))
 
-(defuitest todo-stats--items-left
+(defuitest foo
   [scenes {:system      todo/system
            :system/args []
            :shutdown-f  identity
            :ctx-f       identity
            :props-f     identity
-           :component   todo/todo-stats}]
+           :component   todo/todo-app}]
 
-  (with-component-mounted [initial-render (rehook.test/mount! scenes)]
-    (is initial-render "Initial render should show 0 items left"
-      (not= (rehook.test/children :items-left) [0 " items left"]))))
+  (-> (initial-render scenes
+        (is "Initial render should show 4 TODO items"
+          (= (rehook.test/children :clear-completed) ["Clear completed " 4]))
+
+        (io "Click 'Clear completed'"
+          (rehook.test/invoke-prop :clear-completed :onClick [{}])))
+
+      (next-render
+       (is "After clicking 'Clear Completed', there should be no TODO items"
+         (nil? (rehook.test/children :clear-completed)))
+
+        (io "Invoking todo-input onChange"
+          (rehook.test/invoke-prop :todo-input :onChange [(clj->js {:target {:value "foo"}})]))))
 ```
+
+We use the `->` threading macro to chain our tests.
+
+We write tests using two basic primitives:
+
+* `rehook.test/io` - wrapping any side-effects that will trigger a re-render (such as DOM events, HTTP calls, etc)
+* `rehook.test/is` - like `cljs.test/is`, this is how we write assertions for the current render
+
+Each test body (consisting of `is` and `io`) is scoped to a 'snapshot' of a render:
+
+* `rehook.test/initial-render` - called on our first test
+* `rehook.test/next-render` - trigger a re-render by playing any effects
+
+## Instrumenting the DOM
+
+We add a **unique** key named `:rehook/id` to the props of any component we want to instrument:
+
+```clojure
+[:div {:rehook/id :my-unique-key} "I will be instrumented!"]
+```
+
+We can then invoke props and view the props (and children) using the following fns:
+
+* `rehook.test/children` - returns a collection of children
+* `rehook.test/get-prop` - returns the props of the component
+* `rehook.test/invoke-prop` - invokes a component's event (eg, `onClick`)
+
+You can see these three fns in action in the demo code above.
+
+**TODO:** provide a 'synthetic' later for easily constructing mock JS events. Perhaps look to using [jsdom](https://github.com/jsdom/jsdom)?
+
+## Testing the data layer
+
+* The test reports provides a way to view effects and state over time. However, this is provided only as a means of debugging. Both `use-state` and `use-effects` are implementation details - and therefore shouldn't be tested. 
+* Therefore, `rehook-test` is about testing the resulting output of the component
+* If you follow a re-frame like pattern of using global app state, it should be possible to inspect your subscriptions and invoke your effects using the `rehook.test` primitives. More documentation to follow.
 
 ## rehook.test reports
 
-**Note**: the graphical test reporter only works for `react-dom` tests. It would be great to implement something similar for React Native (using simulator or otherwise)!
-
-rehook.test works great with [shadow-cljs](https://shadow-cljs.github.io/)
+**Note**: the graphical test reporter only works for `react-dom` tests. It would be great to implement something similar for React Native (using the simulator, expo web preview, etc)!
 
 Create a build in your `shadow-cljs.edn` file like so: 
 
@@ -373,6 +430,8 @@ shadow-cljs watch :my-build-id
 ```
 
 Will render your test report. As you update your test/application code, the report will also update!
+
+Inside of your `dev-http` folder 
 
 ## rehook.test headless
 
