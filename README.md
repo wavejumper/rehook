@@ -55,13 +55,13 @@ npm install --save react-dom
 To include one of the above libraries, add the following to your dependencies:
 
 ```
-[rehook/core "2.0.1"]
+[rehook/core "2.0.2"]
 ```
 
 To include all of them:
 
 ```clojure
-[rehook "2.0.1"]
+[rehook "2.0.2"]
 ```
 
 ## Usage
@@ -304,13 +304,16 @@ This can be incredibly useful context to pass to your logging/metrics library!
 Add this to your cljfmt config:
 
 ```clojure
-{}
+TODO: add cljfmt instructions
 ```
 
 ### clj-kondo (calva/etc)
 
-Add this to your `...edn` file:
+Add this to your `.clj-kondo/config.edn` file:
 
+```
+TODO: add clj-kondo instructions
+```
 
 ## Testing
 
