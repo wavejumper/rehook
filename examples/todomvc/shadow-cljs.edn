@@ -14,7 +14,8 @@
                             :output-dir      "public/js"
                             :asset-path      "/js"
                             :closure-defines {rehook.test.browser/HTML "<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"styles/todo.css\"></head><body><div></div></body></html>"}
-                            :devtools        {:preloads [devtools.preload]}
+                            :devtools        {:preloads [devtools.preload]
+                                              :before-load rehook.test/clear-completed!}
                             :modules         {:main {:entries [rehook.test.browser
                                                                todo-test]
                                                      :init-fn rehook.test.browser/report}}

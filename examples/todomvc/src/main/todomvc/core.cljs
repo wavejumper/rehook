@@ -177,6 +177,7 @@
           [:input {:id       "toggle-all"
                    :type     "checkbox"
                    :checked  (zero? active)
+                   :rehook/id :complete-all
                    :onChange #(dispatch [:complete-all (pos? active)])}]
           [:label {:htmlFor "toggle-all"}
            "Mark all as complete"]

@@ -11,35 +11,32 @@
    :props-f     identity
    :component   component})
 
-(defuitest todo-app--clear-completed
+(defuitest todo-app--end-to-end
   [scenes (test-ctx todo/todo-app)]
   (-> (initial-render scenes
-        (is "Initial render should show 4 TODO items"
-          (= (rehook.test/children :clear-completed) ["Clear completed " 4]))
+        (is "Initial render should show 5 active TODO items"
+          (= (rehook.test/children :items-left)
+             [[:strong {} 5]
+              " "
+              "items"
+              " left"]))
 
-        (io "Click 'Clear completed'"
+        (io "Click 'Complete all'"
+          (rehook.test/invoke-prop :complete-all :onChange [{}])))
+
+      (next-render
+       (is "After clicking 'Select all', there should be 5 TODO items selected"
+         (= (rehook.test/children :clear-completed) ["Clear completed " 5]))
+
+        (io "Invoking 'Clear completed'"
           (rehook.test/invoke-prop :clear-completed :onClick [{}])))
 
       (next-render
-       (is "After clicking 'Clear Completed', there should be no TODO items"
+       (is "After clicking 'Clear completed' there should be no TODO items left"
          (nil? (rehook.test/children :clear-completed)))
 
-        (io "Invoking todo-input onChange"
-          (rehook.test/invoke-prop :todo-input :onChange [(clj->js {:target {:value "foo"}})])))
-
-      (next-render
-       (is "After inputting text, value should appear in input"
-         (= "foo" (rehook.test/get-prop :todo-input :value)))
-
-       (io "Pressing enter button on todo-input"
-         (rehook.test/invoke-prop :todo-input :onKeyDown [(clj->js {:which 13})])))
-
-      (next-render
-       (is "After pressing enter button there should be one item to do"
-         (= 1 1))
-
-       (is "After pressing enter button, input's value should be cleared."
-         (empty? (rehook.test/get-prop :todo-input :value))))))
+       (is "A demo of a failing test"
+         (= true false)))))
 
 ;; defuitest isn't limited to just top-level components!
 ;; we can test child components as well :)
@@ -49,7 +46,7 @@
                      {:active 1 :done 1}))]
 
   (-> (initial-render scenes
-        (is "Initial render should show 1 item left"
+        (is "Initial render should show 1 items left"
           (= (rehook.test/children :items-left)
              [[:strong {} 1]
               " "
