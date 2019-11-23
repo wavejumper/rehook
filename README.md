@@ -1,6 +1,7 @@
 # rehook
 
 [![Clojars Project](https://img.shields.io/clojars/v/rehook.svg)](https://clojars.org/rehook)
+[![CircleCI](https://circleci.com/gh/wavejumper/rehook.svg?style=svg)](https://circleci.com/gh/wavejumper/rehook)
 
 Clojurescript React library enabling data-driven architecture
 
