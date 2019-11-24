@@ -16,8 +16,6 @@ The core library does two things:
 * marry React hooks with Clojure atoms
 * avoids singleton state
 
-It is my hope that rehook's core API could be used to build general and domain-specific abstractions on top: eg re-frame, om-next style querying etc.
-
 Its modular design, and guiding philosophy has already enabled some rich tooling like [rehook-test](#testing). 
 
 ## Example apps
