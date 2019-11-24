@@ -9,8 +9,6 @@ Clojurescript React library enabling data-driven architecture
 
 rehook is built from small, modular blocks - each with an explicit notion of time, and a data-first design.
 
-As rehook is modular, each layer builds upon the last. Each layer adds a new idea: testing, syntax, devtools, patterns.
-
 The core library does two things:
 
 * marry React hooks with Clojure atoms
