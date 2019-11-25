@@ -6,4 +6,4 @@
   [[rehook/core "2.0.6"]
    [rehook/dom "2.0.6"]
    [rehook/test "2.0.6"]
-   [rehook/state "2.0.6"]])
+   [rehook/events "2.0.6"]])

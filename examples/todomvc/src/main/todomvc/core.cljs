@@ -61,7 +61,7 @@
    :todos  todos})
 
 (defn config []
-  ;; coming from the rehook.state.integrant ns
+  ;; coming from the rehook.events.integrant ns
   {:rehook/db {:todos   initial-items
                :counter (count initial-items)
                :filter  :all}
