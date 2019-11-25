@@ -2,7 +2,7 @@
   (:require [rehook.core :as rehook]
             [rehook.dom :refer-macros [defui]]
             [rehook.dom.browser :as dom]
-            [rehook.state.integrant :as rehook.state]
+            [rehook.events.integrant :as rehook.events]
             [integrant.core :as ig]
             ["react-dom" :as react-dom]))
 
@@ -39,7 +39,7 @@
   (update db :todos dissoc id))
 
 (defn set-filter [db [next-filter]]
-  (assoc-in db :filter next-filter))
+  (assoc db :filter next-filter))
 
 (def events
   {:add-todo     add-todo
@@ -184,7 +184,7 @@
 (defn ctx []
   (let [system (ig/init (config))]
     ^{:stop #(ig/halt! system)}
-    (rehook.state/ig->ctx system)))
+    (rehook.events/ig->ctx system)))
 
 (defn main []
   (let [elem (dom/bootstrap (ctx) (fn [ctx _] ctx) clj->js todo-app)]

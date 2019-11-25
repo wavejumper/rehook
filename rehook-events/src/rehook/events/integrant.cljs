@@ -1,12 +1,12 @@
-(ns rehook.state.integrant
+(ns rehook.events.integrant
   (:require [integrant.core :as ig]
-            [rehook.state :as state]))
+            [rehook.events :as events]))
 
 (defmethod ig/init-key :rehook/db [_ initial-value]
   (atom initial-value))
 
 (defmethod ig/init-key :rehook/events [_ opts]
-  (state/init-state opts))
+  (events/init opts))
 
 (defn subscribe
   ([sys sub]
@@ -38,4 +38,4 @@
   ([sys k]
    {:dispatch    (partial dispatch sys k)
     :subscribe   (partial subscribe sys k)
-    :dispatch-fx (partial dispatch-fx k)}))
+    :dispatch-fx (partial dispatch-fx sys k)}))

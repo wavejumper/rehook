@@ -1,7 +1,7 @@
-(ns rehook.state
+(ns rehook.events
   (:require [rehook.core :as rehook]))
 
-(defn init-state
+(defn init
   [{:keys [db ctx subscriptions events effects]}]
   {:subscriptions subscriptions
    :events events
