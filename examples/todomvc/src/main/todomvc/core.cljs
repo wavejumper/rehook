@@ -2,25 +2,9 @@
   (:require [rehook.core :as rehook]
             [rehook.dom :refer-macros [defui]]
             [rehook.dom.browser :as dom]
+            [rehook.state.integrant :as rehook.state]
             [integrant.core :as ig]
             ["react-dom" :as react-dom]))
-
-(defmethod ig/init-key :app/db [_ initial-state]
-  (atom initial-state))
-
-;; a very naive re-frame impl containing just subscriptions and events
-(defmethod ig/init-key :rehook/reframe
-  [_ {:keys [db subscriptions events]}]
-  {:subscriptions subscriptions
-   :events events
-   :subscribe (fn [[id & args]]
-                (if-let [subscription (get subscriptions id)]
-                  (first (rehook/use-atom-fn db #(subscription % args) (constantly nil)))
-                  (js/console.warn (str "No subscription found for id " id))))
-   :dispatch (fn [[id & args]]
-               (if-let [handler (get events id)]
-                 (swap! db #(handler % args))
-                 (js/console.warn (str "No event handler found for id " id))))})
 
 (def initial-items
   {0 {:id 0 :title "Rename Cloact to Reagent" :done false}
@@ -77,12 +61,13 @@
    :todos  todos})
 
 (defn config []
-  {:app/db {:todos   initial-items
-            :counter (count initial-items)
-            :filter  :all}
-   :rehook/reframe {:db (ig/ref :app/db)
-                    :events events
-                    :subscriptions subscriptions}})
+  ;; coming from the rehook.state.integrant ns
+  {:rehook/db {:todos   initial-items
+               :counter (count initial-items)
+               :filter  :all}
+   :rehook/events {:db (ig/ref :rehook/db)
+                   :events events
+                   :subscriptions subscriptions}})
 
 (defui todo-input [_ props]
   (let [{:keys [title onSave onStop id class placeholder]} (js->clj props :keywordize-keys true)
@@ -196,23 +181,10 @@
       [:footer {:id "footer"}
        [:p {} "Double-click to edit a todo"]]]]))
 
-(defn subscribe [sys sub]
-  (let [f (get-in sys [:rehook/reframe :subscribe])]
-    (f sub)))
-
-(defn dispatch [sys event]
-  (let [f (get-in sys [:rehook/reframe :dispatch])]
-    (f event)))
-
-;; Instead of passing the entire application context to our react components
-;; we can pass our re-frame like interface instead!
-;;
-;; If we update our event or subscription maps, we can simply call (dev/reload)
 (defn ctx []
   (let [system (ig/init (config))]
     ^{:stop #(ig/halt! system)}
-    {:dispatch  (partial dispatch system)
-     :subscribe (partial subscribe system)}))
+    (rehook.state/ig->ctx system)))
 
 (defn main []
   (let [elem (dom/bootstrap (ctx) (fn [ctx _] ctx) clj->js todo-app)]

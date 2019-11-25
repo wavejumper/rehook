@@ -16,5 +16,5 @@
                     (js/console.warn (str "No effect found for id " id))))
    :dispatch (fn [[id & args]]
                (if-let [handler (get events id)]
-                 (swap! db #(handler % ctx args))
+                 (swap! db #(handler % args))
                  (js/console.warn (str "No event handler found for id " id))))})
