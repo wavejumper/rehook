@@ -5,8 +5,8 @@
   :dependencies
   [[org.clojure/clojurescript "1.10.520" :scope "provided"]
    [org.clojure/clojure "1.10.1" :scope "provided"]
-   [wavejumper/rehook-dom "2.0.4" :scope "provided"]
-   [wavejumper/rehook "2.0.4" :scope "provided"]
+   [rehook/dom "2.0.4" :scope "provided"]
+   [rehook/core "2.0.4" :scope "provided"]
    [zprint "0.5.3"]]
 
   :profiles
