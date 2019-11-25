@@ -131,7 +131,6 @@
                          (conj timeline {:actions  actions
                                          :render   render
                                          :index    (count timeline)
-                                         :dom      #(do render)
                                          :effects  next-effects
                                          :state    scene-state
                                          :elements next-elements})))))]

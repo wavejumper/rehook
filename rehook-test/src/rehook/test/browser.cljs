@@ -41,9 +41,6 @@
     (when-not (neg? prev-index)
       (current-scene scenes prev-index))))
 
-(defn scene-key [index & words]
-  (str "scene-" index "-" (str/join "-" words)))
-
 (defui error-handler [{:keys [title]} props]
   (let [error      (aget props "error")
         stacktrace (aget props "componentStack")]
@@ -66,7 +63,7 @@
        {:FallbackComponent (error-handler {:title "Error rendering Hiccup."} $)}
        ($ :div {:style {:overflow "scroll"}}
           ($ clojure-highlight {}
-             (zpr-str (js->clj ((:dom scene))) 80))))))
+             (zpr-str (js->clj (:render scene)) 80))))))
 
 (defui diff [{:keys [test-results]} props $]
   (let [[idx1 idx2] (aget props "path")
@@ -74,15 +71,15 @@
         scene       (current-scene scenes idx2)
         prev-scene  (previous-scene scenes idx2)]
     ($ clojure-highlight {}
-       (zpr-str (data/diff ((:dom scene))
-                           ((:dom prev-scene)))
+       (zpr-str (data/diff (:render prev-scene)
+                           (:render scene))
                 80))))
 
 (defui dom [{:keys [test-results]} props $]
   (let [[idx1 idx2] (aget props "path")
         [scenes _]  (rehook/use-atom-path test-results [idx1 :scenes])
         scene       (current-scene scenes idx2)
-        dom         (:dom scene)]
+        render      (:render scene)]
     ($ ErrorBoundary
        {:FallbackComponent (error-handler {:title "Error rendering to the DOM."} $)}
        ($ Frame {:initialContent HTML
@@ -92,7 +89,7 @@
           (dom.browser/bootstrap
            {} identity clj->js
            (ui [_ _]
-             (dom)))))))
+             render))))))
 
 (defui state [{:keys [test-results]} props]
   (let [[idx1 idx2] (aget props "path")
