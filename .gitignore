@@ -2,3 +2,5 @@
 *.asc
 target/
 */target/
+*/*.iml
+*/.idea/
