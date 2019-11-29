@@ -18,7 +18,11 @@
     (use-effect
      (fn []
        (let [id (str (random-uuid))]
-         (add-watch a id (fn [_ _ _ next-state] (set-val (getter-fn next-state))))
+         (add-watch a id (fn [_ _ prev-state next-state]
+                           (let [prev-value (getter-fn prev-state)
+                                 next-value (getter-fn next-state)]
+                             (when-not (= prev-value next-value)
+                               (set-val next-value)))))
          #(remove-watch a id)))
      [])
 
