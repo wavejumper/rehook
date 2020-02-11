@@ -26,10 +26,21 @@
     ((test-component-with-side-effect {:a a} list) {})
     (is (= @a ::evaled))))
 
+(dom/defui material-icon [_ {:keys [icon]}]
+  [:i {:className "material-icons"
+       :style     {:userSelect "none"}}
+   icon])
+
+(deftest button
+  (is (= [:i
+          {:className "material-icons", :style {:userSelect "none"}}
+          [:i {:className "material-icons", :style {:userSelect "none"}} "foo"]]
+         (server/bootstrap nil (constantly nil) identity material-icon {:icon [material-icon {:icon "foo"}]}))))
+
 (deftest embedded-symbol
   (let [embedded-child [:div {} nil "foo"]]
     (is (= (dom/html list [:div {} (pr-str "foo")])
-           '(:div {} ("\"foo\""))))
+           '(:div {} "\"foo\"")))
 
     (is (= (dom/html list [:div {} embedded-child])
            '(:div {} (:div {} "foo"))))))

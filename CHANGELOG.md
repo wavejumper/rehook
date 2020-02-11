@@ -1,3 +1,9 @@
+## 2.1.4 (Feburary 11, 2020)
+
+### rehook-dom
+
+* Fix more edge cases in complex, nested hiccup compilation
+
 ## 2.1.3 (Feburary 11, 2020)
 
 ### rehook-dom

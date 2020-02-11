@@ -29,7 +29,10 @@
      (vector? e)
      (apply eval-hiccup $ e)
 
-     :else ($ e)))
+     (fn? e)
+     ($ e)
+
+     :else e))
   ([$ e props]
    ($ e props))
   ([$ e props & children]
@@ -50,7 +53,7 @@
                                    (vector? x)
                                    (apply compile-hiccup $ x)
 
-                                   (or (nil? x) (string? x) (number? x) (symbol? x))
+                                   (or (nil? x) (string? x) (number? x))
                                    x
 
                                    :else `(eval-hiccup ~$ ~x)))
