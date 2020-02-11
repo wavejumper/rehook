@@ -41,13 +41,13 @@ npm install --save react-dom
 To include one of the above libraries, add the following to your dependencies:
 
 ```
-[rehook/core "2.1.3"]
+[rehook/core "2.1.4"]
 ```
 
 To include all of them:
 
 ```clojure
-[rehook "2.1.3"]
+[rehook "2.1.4"]
 ```
 
 ## Usage
