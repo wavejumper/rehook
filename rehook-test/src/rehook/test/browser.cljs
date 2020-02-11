@@ -3,8 +3,8 @@
             [rehook.dom :refer-macros [defui ui]]
             [rehook.dom.browser :as dom.browser]
             [rehook.test :as rehook.test]
+            [rehook.util :as util]
             [zprint.core :as zp]
-            [clojure.string :as str]
             [clojure.data :as data]
             ["react-highlight" :default Highlight]
             ["react-frame-component" :default Frame]
@@ -27,11 +27,14 @@
    (with-out-str
     (zp/zprint code numeric-width opts))))
 
+(defn children [props]
+  (some-> props util/react-props (aget "children")))
+
 (defui clojure-highlight [_ props $]
-  (apply $ Highlight {:language "clojure"} (aget props "children")))
+  (apply $ Highlight {:language "clojure"} (children props)))
 
 (defui js-highlight [_ props $]
-  (apply $ Highlight {:language "javascript"} (aget props "children")))
+  (apply $ Highlight {:language "javascript"} (children props)))
 
 (defn current-scene [scenes index]
   (get-in scenes [:timeline index]))
@@ -42,21 +45,20 @@
       (current-scene scenes prev-index))))
 
 (defui error-handler [{:keys [title]} props]
-  (let [error      (aget props "error")
-        stacktrace (aget props "componentStack")]
+  (let [error      (some-> props util/react-props (aget "error"))
+        stacktrace (some-> props util/react-props (aget "componentStack"))]
     [:div {}
      [:h1 {} (str title)]
      [clojure-highlight {} (zpr-str error 120)]
      [js-highlight {} (str stacktrace)]]))
 
-(defui material-icon [_ props]
-  (let [icon (aget props "icon")]
-    [:i {:className "material-icons"
-         :style {:userSelect "none"}}
-     icon]))
+(defui material-icon [_ {:keys [icon]}]
+  [:i {:className "material-icons"
+       :style     {:userSelect "none"}}
+   icon])
 
-(defui code [{:keys [test-results]} props $]
-  (let [[idx1 idx2] (aget props "path")
+(defui code [{:keys [test-results]} {:keys [path]} $]
+  (let [[idx1 idx2] path
         [scenes _]  (rehook/use-atom-path test-results [idx1 :scenes])
         scene       (current-scene scenes idx2)]
     ($ ErrorBoundary
@@ -65,8 +67,8 @@
           ($ clojure-highlight {}
              (zpr-str (js->clj (:render scene)) 80))))))
 
-(defui diff [{:keys [test-results]} props $]
-  (let [[idx1 idx2] (aget props "path")
+(defui diff [{:keys [test-results]} {:keys [path]} $]
+  (let [[idx1 idx2] path
         [scenes _]  (rehook/use-atom-path test-results [idx1 :scenes])
         scene       (current-scene scenes idx2)
         prev-scene  (previous-scene scenes idx2)]
@@ -75,8 +77,8 @@
                            (:render scene))
                 80))))
 
-(defui dom [{:keys [test-results]} props $]
-  (let [[idx1 idx2] (aget props "path")
+(defui dom [{:keys [test-results]} {:keys [path]} $]
+  (let [[idx1 idx2] path
         [scenes _]  (rehook/use-atom-path test-results [idx1 :scenes])
         scene       (current-scene scenes idx2)
         render      (:render scene)]
@@ -91,8 +93,8 @@
            (ui [_ _]
              render))))))
 
-(defui state [{:keys [test-results]} props]
-  (let [[idx1 idx2] (aget props "path")
+(defui state [{:keys [test-results]} {:keys [path]}]
+  (let [[idx1 idx2] path
         [scenes _]  (rehook/use-atom-path test-results [idx1 :scenes])
         scene       (current-scene scenes idx2)
         prev-scene  (previous-scene scenes idx2)
@@ -123,8 +125,8 @@
 
       [:div {} "No state mounted"])))
 
-(defui effects [{:keys [test-results]} props]
-  (let [[idx1 idx2]  (aget props "path")
+(defui effects [{:keys [test-results]} {:keys [path]}]
+  (let [[idx1 idx2]  path
         [scenes _]   (rehook/use-atom-path test-results [idx1 :scenes])
         scene        (current-scene scenes idx2)
         effects      (some-> scene :effects deref)
@@ -155,26 +157,23 @@
 
       [:div {} "No effects mounted"])))
 
-(defui button [_ props]
-  (let [on-click (aget props "onClick")
-        selected (aget props "selected")
-        title    (aget props "title")]
-    [:div {:style   {:padding      "10px"
-                     :border       (if selected
-                                     "1px solid #222"
-                                     "1px solid #ccc")
-                     :borderRadius "3px"
-                     :marginRight  "10px"
-                     :cursor       "pointer"
-                     :userSelect   "none"}
-           :onClick on-click}
-     (if selected
-       [:strong {} title]
-       title)]))
+(defui button [_ {:keys [onClick selected title]}]
+  [:div {:style   {:padding      "10px"
+                   :border       (if selected
+                                   "1px solid #222"
+                                   "1px solid #ccc")
+                   :borderRadius "3px"
+                   :marginRight  "10px"
+                   :cursor       "pointer"
+                   :userSelect   "none"}
+         :onClick onClick}
+   (if selected
+     [:strong {} (str title)]
+     [:span {} (str title)])])
 
-(defui test-assertion [{:keys [test-results]} props]
-  (let [[idx1 idx2]                      (aget props "path")
-        debug?                           (aget props "debug")
+(defui test-assertion [{:keys [test-results]} {:keys [path debug]}]
+  (let [[idx1 idx2]                      path
+        debug?                           debug
         path                             [idx1 :tests idx2]
         [test _]                         (rehook/use-atom-path test-results path)
         [show-details? set-show-details] (rehook/use-state true)
@@ -270,8 +269,8 @@
          :effects [effects {:path [idx1 (:scene test)]}]
          :state   [state {:path [idx1 (:scene test)]}]))]))
 
-(defui mutation [{:keys [test-results]} props]
-  (let [[idx1 idx2] (aget props "path")
+(defui mutation [{:keys [test-results]} {:keys [path]}]
+  (let [[idx1 idx2] path
         path        [idx1 :tests idx2]
         [test _]    (rehook/use-atom-path test-results path)]
     [:div {:style {:display         "flex"
@@ -318,7 +317,7 @@
                :key  (str ns "/" name "/" "mutation:" summary-index)}]))
 
 (defui summary [{:keys [test-results]} props]
-  (let [test-index (aget props "index")
+  (let [test-index (:index props)
         [{:keys [name ns tests]} _] (rehook/use-atom-path test-results [test-index])]
     (into [:div {}]
           ;; TODO: not use loop
@@ -330,9 +329,8 @@
               (let [component (build-summary-component name ns test-index summary-index tests)]
                 (recur (inc summary-index) (rest tests) (conj components component))))))))
 
-(defui test-error [{:keys [test-results]} props]
-  (let [index     (aget props "index")
-        [e _]     (rehook/use-atom-path test-results [index :e])
+(defui test-error [{:keys [test-results]} {:keys [index]}]
+  (let [[e _]     (rehook/use-atom-path test-results [index :e])
         [stack _] (rehook/use-atom-path test-results [index :stack])]
     [:div {}
      [:h2 {} "Error evaluating test!"]
@@ -340,9 +338,8 @@
        [js-highlight {} (str stack)]
        [js-highlight {} (str e)])]))
 
-(defui testcard [{:keys [test-results]} props]
-  (let [index (aget props "index")
-        [{:keys [name form ns line tests error?]} _] (rehook/use-atom-path test-results [index])
+(defui testcard [{:keys [test-results]} {:keys [index]}]
+  (let [[{:keys [name form ns line tests error?]} _] (rehook/use-atom-path test-results [index])
         test-str (zpr-str (first form) 80)
         assertions (filter #(= :assertion (:type %)) tests)
         pass? (and (every? :pass assertions) (not error?))

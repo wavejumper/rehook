@@ -1,5 +1,8 @@
 (ns rehook.util)
 
+(defn react-props [props]
+  (some-> props meta :react/props))
+
 (defn rehook-component? [e]
   (-> e meta :rehook/component true?))
 

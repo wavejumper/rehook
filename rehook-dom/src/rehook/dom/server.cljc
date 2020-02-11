@@ -12,7 +12,7 @@
     (into [:div {}] e)
 
     (util/rehook-component? e)
-    (let [ret (e ctx $)]
+    (let [ret (e (assoc ctx :rehook.dom/props args) $)]
       (ret args))
 
     (fn? e)

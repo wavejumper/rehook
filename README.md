@@ -14,7 +14,7 @@ The core library does two things:
 * marry React hooks with Clojure atoms
 * avoids singleton state
 
-Its modular design, and guiding philosophy has already enabled some rich tooling like [rehook-test](#testing). 
+Its modular design, and guiding philosophy has already enabled some rich tooling like [rehook-test](#testing).
 
 ## Example apps
 
@@ -22,19 +22,9 @@ Its modular design, and guiding philosophy has already enabled some rich tooling
 * [todomvc](https://github.com/wavejumper/rehook/tree/master/examples/todomvc)
 * [rehook-test](https://github.com/wavejumper/rehook/tree/master/rehook-test)
 
-## Maturity
-
-rehook is still a young project - though the core API is fairly mature. 
-
-Through the rapid development of rehook, I have not introduced a single breaking change in the process! This is largely due to its lean surface area and modular design.
-
-Therefore, I aim to never introduce a single breaking change to the `rehook.core` and `rehook.dom` APIs.
-
-High level libraries like `rehook.test` -- where I am still experimenting with the design are subject to breaking change.
-
 ## Installation
 
-The documentation assumes you are using [shadow-cljs](https://shadow-cljs.org/). 
+The documentation assumes you are using [shadow-cljs](https://shadow-cljs.org/).
 
 You will need to provide your own React dependencies, eg:
 ```
@@ -51,13 +41,13 @@ npm install --save react-dom
 To include one of the above libraries, add the following to your dependencies:
 
 ```
-[rehook/core "2.0.7"]
+[rehook/core "2.1.3"]
 ```
 
 To include all of them:
 
 ```clojure
-[rehook "2.0.7"]
+[rehook "2.1.3"]
 ```
 
 ## Usage
@@ -76,9 +66,9 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 
 ## Usage
 
-```clojure 
-(ns demo 
-  (:require 
+```clojure
+(ns demo
+  (:require
     [rehook.core :as rehook]
     [rehook.dom :refer-macros [defui]]
     [react.dom.browser :as dom.browser]
@@ -87,7 +77,7 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 (defn system [] ;; <-- system map (this could be integrant, component, etc)
   {:state (atom {:missiles-fired? false})})
 
-(defui my-component 
+(defui my-component
   [{:keys [state]} ;; <-- context map from bootstrap fn
    props] ;; <-- any props passed from parent component
   (let [[curr-state _]                       (rehook/use-atom state) ;; <-- capture the current value of the atom
@@ -102,7 +92,7 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 
     [:section {}
       [:div {}
-        (if debug 
+        (if debug
           [:span {:onClick #(set-debug false)} "Hide debug"]
           [:span {:onClick #(set-debug true)} "Show debug"])
         (when debug
@@ -113,8 +103,8 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
         [:div {:onClick #(set-missiles-fired true)} "Fire missiles"])]))
 
 ;; How to render a component to the DOM
-(react-dom/render 
-  (dom.browser/bootstrap 
+(react-dom/render
+  (dom.browser/bootstrap
     (system) ;; <-- context map
     identity ;; <-- context transformer
     clj->js ;; <-- props transformer
@@ -125,17 +115,17 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 ### Hooks gotchas
 
 * When using `use-effect`, make sure the values of `deps` pass JavaScript's notion of equality! Solution: use simple values instead of complex maps.
-* Enforced via convention, React hooks and effects need to be defined at the top-level of your component (and not bound conditionally) 
+* Enforced via convention, React hooks and effects need to be defined at the top-level of your component (and not bound conditionally)
 
 # Components
 
-## rehook.dom 
+## rehook.dom
 
 `rehook.dom` provides hiccup syntax.
 
 `rehook.dom` provides a baggage free way to pass down application context (eg, [integrant](https://github.com/weavejester/integrant) or [component](https://github.com/stuartsierra/component)) as you will see below.
 
-## defui 
+## defui
 
 `rehook.dom/defui` is a macro used to define `rehook` components. This macro is only syntactic sugar, as all `rehook` components are cljs fns.
 
@@ -147,10 +137,10 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 It must return valid hiccup.
 
 ```clojure
-(ns demo 
+(ns demo
   (:require [rehook.dom :refer-macros [defui]]))
 
-(defui my-component [{:keys [dispatch]} _] 
+(defui my-component [{:keys [dispatch]} _]
   [:text {:onClick #(dispatch :fire-missiles)} "Fire missiles!"])
 ```
 
@@ -170,9 +160,9 @@ Simply return a collection of hiccup:
 Reference the component directly:
 
 ```clojure
-(defui child [_ _] 
+(defui child [_ _]
   [:div {} "I am the child"])
-  
+
 (defui parent [_ _]
   [child])
 ```
@@ -188,7 +178,7 @@ Same as rehook components. Reference the component directly:
   [ReactSelect props])
 ```
 
-### reagent components 
+### reagent components
 
 ```clojure
 (require '[reagent.core :as r])
@@ -215,9 +205,15 @@ Because the `$` render fn is passed into every rehook component you can overload
 
 A props transformation fn is passed to the initial `bootstrap` fn. The return value of this fn must be a JS object.
 
-A good default to use is `cljs.core/clj->js`. 
+A good default to use is `cljs.core/clj->js`.
 
 If you want to maintain Clojure idioms, a library like [camel-snake-kebab](https://github.com/clj-commons/camel-snake-kebab) could be used to convert keys in your props (eg, `on-press` to `onPress`)
+
+Props transformation is used for interop with vanilla React components. Therefore, all props passed into rehook do not go through the transformation fn, and remain untouched.
+
+If you need to access the React props in Rehook components (for example, to access children), the JS props computed by React are available as metadata on the props map, under the `:react/props` key.
+
+You can use the util fn `rehook.util/react-props` to conveniently extract the React props.
 
 ## Initializing
 
@@ -225,9 +221,9 @@ If you want to maintain Clojure idioms, a library like [camel-snake-kebab](https
 
 You can call `react-dom/render` directly, and `bootstrap` your component:
 
-```clojure 
-(ns example.core 
-  (:require 
+```clojure
+(ns example.core
+  (:require
     [example.components :refer [app]]
     [rehook.dom.browser :as dom]
     ["react-dom" :as react-dom]))
@@ -236,7 +232,7 @@ You can call `react-dom/render` directly, and `bootstrap` your component:
   {:dispatch (fn [& _] (js/console.log "TODO: implement dispatch fn..."))})
 
 (defn main []
-  (react-dom/render 
+  (react-dom/render
     (dom/bootstrap (system) identity clj->js app)
     (js/document.getElementById "app")))
 ```
@@ -245,9 +241,9 @@ You can call `react-dom/render` directly, and `bootstrap` your component:
 
 You can use the `rehook.dom.native/component-provider` fn if you directly call [AppRegistry](https://facebook.github.io/react-native/docs/appregistry)
 
-```clojure 
+```clojure
 (ns example.core
-  (:require 
+  (:require
     [rehook.dom :refer-macros [defui]]
     [rehook.dom.native :as dom]
     ["react-native" :refer [AppRegistry]]))
@@ -270,16 +266,16 @@ The context transformer can be incredibly useful for instrumentation, or for add
 
 For example:
 
-```clojure 
+```clojure
 (require '[rehook.util :as util])
 
-(defn ctx-transformer [ctx component]  
+(defn ctx-transformer [ctx component]
   (update ctx :log-ctx #(conj (or % []) (util/display-name component))))
 
 (dom/component-provider (system) ctx-transformer clj->js app)
 ```
 
-In this example, each component will have the hierarchy of its parents in the DOM tree under the key `:log-ctx`. 
+In this example, each component will have the hierarchy of its parents in the DOM tree under the key `:log-ctx`.
 
 This can be incredibly useful context to pass to your logging/metrics library!
 
@@ -315,7 +311,7 @@ TODO: add clj-kondo instructions
 
 rehook allows you to test your entire application - from data layer to view.
 
-How? Because `rehook` promotes building applications with no singleton global state. 
+How? Because `rehook` promotes building applications with no singleton global state.
 
 Therefore, you can treat your components as 'pure functions', as all inputs to the component are passed in as arguments.
 
@@ -331,7 +327,7 @@ rehook-test supports:
 ## Demo
 
 A demo report generated from rehook's own todomvc tests can be found [here](https://crowley.kibu.com.au/rehook/)
- 
+
 ## Screenshots
 
 Write tests, and get reports like this:
@@ -350,7 +346,7 @@ Each state change produces a snapshot in time that rehook captures as a 'scene'.
 
 Like Kafka's ToplogyTestDriver, the tests run in a simulated library runtime.
 
-However, a read-only snapshot of the dom is rendered for each scene (as you can see above)! 
+However, a read-only snapshot of the dom is rendered for each scene (as you can see above)!
 
 This allows you to catch any runtime errors caused by invalid inputs for each re-render.
 
@@ -434,7 +430,7 @@ You can see these three fns in action in the demo code above.
 
 ## Testing the data layer
 
-* The test reports provides a way to view effects and state over time. However, this is provided only as a means of debugging. Both `use-state` and `use-effects` are implementation details - and shouldn't be tested. 
+* The test reports provides a way to view effects and state over time. However, this is provided only as a means of debugging. Both `use-state` and `use-effects` are implementation details - and shouldn't be tested.
 * Therefore, `rehook-test` is about testing the resulting output of the component.
 * If you follow a re-frame like pattern of using global app state, it should be possible to inspect your subscriptions and invoke your effects using the `rehook.test` primitives. More documentation to follow.
 
@@ -442,7 +438,7 @@ You can see these three fns in action in the demo code above.
 
 **Note**: the graphical test reporter only works for `react-dom` tests. It would be great to implement something similar for React Native (using the simulator, expo web preview, etc)!
 
-Create a build in your `shadow-cljs.edn` file like so: 
+Create a build in your `shadow-cljs.edn` file like so:
 
 ```clojure
   {:target :browser
@@ -457,7 +453,7 @@ Create a build in your `shadow-cljs.edn` file like so:
                     :init-fn rehook.test.browser/report}}}
 ```
 
-And you are done! 
+And you are done!
 
 ```
 shadow-cljs watch :my-build-id
