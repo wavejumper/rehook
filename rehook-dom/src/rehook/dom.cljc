@@ -26,13 +26,16 @@
 (defn eval-hiccup
   ([$ e]
    (cond
+     (seq? e)
+     (map #(apply $ %) e)
+
      (vector? e)
      (apply eval-hiccup $ e)
 
-     (fn? e)
-     ($ e)
+     (or (nil? e) (string? e) (number? e))
+     e
 
-     :else e))
+     :else ($ e)))
   ([$ e props]
    ($ e props))
   ([$ e props & children]
@@ -74,11 +77,11 @@
            `(def ~name
               ^{:rehook/component true
                 :rehook/name      ~(str name)}
-              (fn ~(gensym name) [ctx# $#]
+              (fn ~name [ctx# $#]
                 (let [~ctx (dissoc ctx# :rehook.dom/props)
                       ~$? $#]
                   (fn ~(gensym name) [props#]
-                    (let [~props (with-meta (get ctx# :rehook.dom/props props#) {:react/props props#})]
+                    (let [~props (with-meta (get ctx# :rehook.dom/props {}) {:react/props props#})]
                       ~@body))))))
 
        (do (s/assert* ::defui [name [ctx props] body])
@@ -88,11 +91,11 @@
              `(def ~name
                 ^{:rehook/component true
                   :rehook/name      ~(str name)}
-                (fn ~(gensym name) [ctx# $#]
+                (fn ~name [ctx# $#]
                   (let [~ctx (dissoc ctx# :rehook.dom/props)
                         ~$ $#]
                     (fn ~(gensym name) [props#]
-                      (let [~props (with-meta (get ctx# :rehook.dom/props props#) {:react/props props#})]
+                      (let [~props (with-meta (get ctx# :rehook.dom/props {}) {:react/props props#})]
                         ~@effects
                         (html ~$ ~hiccup)))))))))))
 
@@ -107,7 +110,7 @@
              (let [~ctx (dissoc ctx# :rehook.dom/props)
                    ~$? $#]
                (fn ~(gensym id) [props#]
-                 (let [~props (with-meta (get ctx# :rehook.dom/props props#) {:react/props props#})]
+                 (let [~props (with-meta (get ctx# :rehook.dom/props {}) {:react/props props#})]
                    ~@body))))
            {:rehook/component true
             :rehook/name      ~(str id)}))
@@ -122,9 +125,8 @@
              (let [~ctx (dissoc ctx# :rehook.dom/props)
                    ~$ $#]
                (fn ~(gensym id) [props#]
-                 (let [~props (with-meta (get ctx# :rehook.dom/props props#) {:react/props props#})]
+                 (let [~props (with-meta (get ctx# :rehook.dom/props {}) {:react/props props#})]
                    ~@effects
                    (html ~$ ~hiccup)))))
            {:rehook/component true
             :rehook/name      ~(str id)})))))
-

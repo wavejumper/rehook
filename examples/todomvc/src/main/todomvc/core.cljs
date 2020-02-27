@@ -171,9 +171,9 @@
                                          :done :done
                                          :all identity)
                                        items)]
-            (into [:ul {:id "todo-list"}]
-                  (map (fn [item] [todo-item (assoc item :key (:id item))])
-                       filtered-items)))
+            [:ul {:id "todo-list"}
+             (for [item filtered-items]
+               [todo-item (assoc item :key (:id item))])])
           [:footer {:id "footer"}
            [todo-stats {:active active
                         :done   done}]]]])

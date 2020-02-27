@@ -1,5 +1,6 @@
 (ns rehook.test
   (:require [rehook.util :as util]
+            [rehook.dom.util :as dom.util]
             #?(:cljs [rehook.dom :refer-macros [ui]]
                :clj  [rehook.dom :refer [ui]])
             #?(:cljs [rehook.core :as rehook])
@@ -53,10 +54,11 @@
 (defn- handle-type
   [next-elements e ctx $ args raw-args children]
   (let [elem (cond
-               (keyword? e)               (into [e args] children)
+               (keyword? e)               (let [[elem extra-args] (dom.util/keyword->elem e)]
+                                            (into [(keyword elem) (merge args extra-args)] children))
                ;; TODO: properly handle fragments...
-               (vector? e)                (into [:*] e)
-               (util/rehook-component? e) ((e ctx $) args)
+               (= :> e)                   (into [:div {}] e)
+               (util/rehook-component? e) ((e (assoc ctx :rehook.dom/props args) $) raw-args)
                (fn? e)                    (e args))]
     (if-let [id (:rehook/id raw-args)]
       (let [elem-meta {:e        e
@@ -72,7 +74,10 @@
      ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e]
       (bootstrap next-elements next-scene scene-state effects local-state ctx ctx-f props-f e {}))
 
-     ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e args & children]
+     ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e args]
+      (bootstrap next-elements next-scene scene-state effects local-state ctx ctx-f props-f e args '()))
+
+     ([next-elements next-scene scene-state effects local-state ctx ctx-f props-f e args child & children]
       (let [ctx          (ctx-transformer (ctx-f ctx e) e)
             component-id (:rehook.test/id ctx)
             state-id     (atom 0)
@@ -82,7 +87,10 @@
                       rehook/use-state (partial use-state scene-state local-state next-scene component-id state-id)]
 
           (let [$ (partial bootstrap next-elements next-scene scene-state effects local-state ctx ctx-f props-f)]
-            (handle-type next-elements e ctx $ (props-f args) args children)))))))
+            (handle-type next-elements e ctx $ (props-f args) args
+                         (if (seq? child)
+                           (into child children)
+                           (cons child children)))))))))
 
 #?(:clj
    (defn- bootstrap [& args]

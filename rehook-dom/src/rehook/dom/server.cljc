@@ -1,28 +1,44 @@
 (ns rehook.dom.server
-  (:require [rehook.util :as util]))
+  (:require
+   [rehook.util :as util]
+   [rehook.dom.util :as dom.util]))
 
 (defn handle-type
-  [e ctx $ args children]
+  [e ctx $ props-f args children]
   (cond
-    (keyword? e)
-    (into [e args] children)
-
     ;; TODO: server-side fragments???
-    (sequential? e)
+    (= :> e)
     (into [:div {}] e)
 
+    (keyword? e)
+    (let [[elem extra-args] (dom.util/keyword->elem e)]
+      (into [(keyword elem) (props-f (merge args extra-args))] children))
+
     (util/rehook-component? e)
-    (let [ret (e (assoc ctx :rehook.dom/props args) $)]
-      (ret args))
+    (let [props (props-f args)
+          ret   (e (assoc ctx :rehook.dom/props props) $)]
+      (ret props))
 
     (fn? e)
-    (e args)))
+    (e (props-f args))))
 
 (defn bootstrap
   ([ctx ctx-f props-f e]
    (bootstrap ctx ctx-f props-f e {}))
 
-  ([ctx ctx-f props-f e args & children]
+  ([ctx ctx-f props-f e args]
    (let [ctx (ctx-f ctx e)
          $   (partial bootstrap ctx ctx-f props-f)]
-     (handle-type e ctx $ (props-f args) children))))
+     (handle-type e ctx $ props-f args [])))
+
+  ([ctx ctx-f props-f e args child]
+   (let [ctx (ctx-f ctx e)
+         $   (partial bootstrap ctx ctx-f props-f)]
+     (if (seq? child)
+       (handle-type e ctx $ props-f args child)
+       (handle-type e ctx $ props-f args [child]))))
+
+  ([ctx ctx-f props-f e args child & children]
+   (let [ctx (ctx-f ctx e)
+         $   (partial bootstrap ctx ctx-f props-f)]
+     (handle-type e ctx $ props-f args (cons child children)))))

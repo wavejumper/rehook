@@ -48,13 +48,13 @@
 (deftest defui-macros
   (let [result ((test-component {:my :ctx}
                                 list)
-                {:props :my-props})
+                {})
         result2 ((test-component-2-arity {:my :ctx} list)
-                 {:props :my-props})]
+                 {})]
 
     (is (= result
            result2
-           '(:div {:ctx {:my :ctx}, :props {:props :my-props}}
+           '(:div {:ctx {:my :ctx}, :props {}}
              (:div {} "Hello world!"))))
 
     (is (util/rehook-component? test-component-2-arity))
@@ -67,10 +67,10 @@
                             [:div {} "Hello world!"]]))
         result ((anon-component {:my :ctx}
                                 list)
-                {:props :my-props})]
+                {})]
 
     (is (= result
-           '(:div {:ctx {:my :ctx}, :props {:props :my-props}}
+           '(:div {:ctx {:my :ctx}, :props {}}
              (:div {} "Hello world!"))))
 
     (is (util/rehook-component? anon-component))))
@@ -109,3 +109,23 @@
             "foo"]]]
 
        (server/bootstrap {:my :ctx} (fn [x _] x) identity nested-conditional-component))))
+
+(dom/defui child-as-list [_ _]
+  [:div.foo#bar {}
+   (for [class ["a" "b" "c"]]
+     [(dom/ui [_ _]
+        [:div {:class (str class)}])])])
+
+(dom/defui child-as-list-static [_ _]
+  [:div.foo#bar {}
+   '([:div {:class "a"}]
+     [:div {:class "b"}]
+     [:div {:class "c"}])])
+
+(deftest child-with-list-comprehension
+  (is (= [:div {:className "foo", :id "bar"}
+          [:div {:class "a"}]
+          [:div {:class "b"}]
+          [:div {:class "c"}]]
+         (server/bootstrap {:my :ctx} (fn [x _] x) identity child-as-list-static)
+         (server/bootstrap {:my :ctx} (fn [x _] x) identity child-as-list))))

@@ -3,6 +3,9 @@
 (defn react-props [props]
   (some-> props meta :react/props))
 
+(defn children [props]
+  (some-> props react-props (aget "children")))
+
 (defn rehook-component? [e]
   (-> e meta :rehook/component true?))
 
