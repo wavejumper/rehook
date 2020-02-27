@@ -41,13 +41,13 @@ npm install --save react-dom
 To include one of the above libraries, add the following to your dependencies:
 
 ```
-[rehook/core "2.1.4"]
+[rehook/core "2.1.5"]
 ```
 
 To include all of them:
 
 ```clojure
-[rehook "2.1.4"]
+[rehook "2.1.5"]
 ```
 
 ## Usage
@@ -148,11 +148,11 @@ The anonymous counterpart is `rehook.dom/ui`
 
 ### fragments
 
-Simply return a collection of hiccup:
+Use the `:>` shorthand:
 
 ```clojure
 (defui fragmented-ui [_ _]
-  [[:div {} "Div 1"] [:div {} "Div 2"]])
+  [:> {} [:div {} "Div 1"] [:div {} "Div 2"]])
 ```
 
 ### rehook components
@@ -188,6 +188,20 @@ Same as rehook components. Reference the component directly:
 
 (defui my-rehook-component [_ _]
   [(r/reactify-component my-reagent-component)])
+```
+
+### children
+
+```clojure
+;; acceptable
+[:div {}
+  (for [item items]
+    [item {}])]
+
+;; also acceptable
+[:div {}
+  [child1]
+  [child2]]
 ```
 
 ### hiccup-free

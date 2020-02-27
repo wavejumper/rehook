@@ -1,12 +1,12 @@
-(defproject rehook/test "2.1.4"
+(defproject rehook/test "2.1.5"
   :description "React Hooks for Clojurescript"
   :url "https://github.com/wavejumper/rehook"
 
   :dependencies
   [[org.clojure/clojurescript "1.10.520" :scope "provided"]
    [org.clojure/clojure "1.10.1" :scope "provided"]
-   [rehook/dom "2.1.3" :scope "provided"]
-   [rehook/core "2.1.0" :scope "provided"]
+   [rehook/dom "2.1.5" :scope "provided"]
+   [rehook/core "2.1.5" :scope "provided"]
    [zprint "0.5.3"]]
 
   :profiles
