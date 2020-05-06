@@ -340,7 +340,7 @@ rehook-test supports:
 
 ## Demo
 
-A demo report generated from rehook's own todomvc tests can be found [here](https://crowley.kibu.com.au/rehook/)
+A demo report generated from rehook's own todomvc tests can be found [here](https://tscrowley.dev/rehook/)
 
 ## Screenshots
 
