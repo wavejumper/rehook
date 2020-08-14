@@ -71,7 +71,7 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
   (:require
     [rehook.core :as rehook]
     [rehook.dom :refer-macros [defui]]
-    [react.dom.browser :as dom.browser]
+    [rehook.dom.browser :as dom.browser]
     ["react-dom" :as react-dom]))
 
 (defn system [] ;; <-- system map (this could be integrant, component, etc)
