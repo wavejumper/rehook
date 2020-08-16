@@ -1,3 +1,10 @@
+## 2.1.6 (August 16, 2020)
+
+### rehook-dom
+
+* Support both `div.class.name` shorthand and `{:className ...}` at once (eg, by merging the two)
+* Fix more edge cases in complex, nested hiccup compilation
+
 ## 2.1.5 (Feburary 27, 2020)
 
 ### rehook-dom
