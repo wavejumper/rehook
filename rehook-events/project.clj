@@ -1,4 +1,4 @@
-(defproject rehook/events "2.1.5"
+(defproject rehook/events "2.1.6"
   :description "React Hooks for Clojurescript"
   :url "https://github.com/wavejumper/rehook"
 
