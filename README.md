@@ -132,7 +132,7 @@ If you need a primer on React hooks, the [API docs](https://reactjs.org/docs/hoo
 `defui` takes in two arguments:
 
 * `context`: immutable, application context
-* `props`: any props passed to the component. This will be an untouched JS object from React.
+* `props`: any props passed to the component
 
 It must return valid hiccup.
 
