@@ -13,7 +13,7 @@
 
     (keyword? e)
     (let [[elem extra-args] (dom.util/keyword->elem e)]
-      [(aget rn (name elem)) (merge args extra-args)])
+      [(aget rn (name elem)) (dom.util/merge-arguments args extra-args)])
 
     (util/rehook-component? e)
     (let [rehook-component (e (assoc ctx :rehook.dom/props args) $)]

@@ -36,20 +36,32 @@
      e
 
      :else ($ e)))
+
   ([$ e props]
    ($ e props))
+
   ([$ e props & children]
-   (apply $ e props (keep (fn [x]
-                            (if (vector? x)
-                              (apply eval-hiccup $ x)
-                              x))
-                          children))))
+   (apply $ e props
+          (->> children
+               (mapcat (fn [child]
+                         (cond
+                           (and (vector? child) (seq child))
+                           [(apply eval-hiccup $ child)]
+
+                           (seq? child)
+                           (map #(eval-hiccup $ %) child)
+
+                           :else
+                           [(eval-hiccup $ child)])))
+               (filter identity)))))
 
 (defn compile-hiccup
   ([$ e]
    (list $ e))
+
   ([$ e props]
    (list $ e props))
+
   ([$ e props & children]
    (apply list $ e props (keep (fn [x]
                                  (cond
@@ -60,7 +72,7 @@
                                    x
 
                                    :else `(eval-hiccup ~$ ~x)))
-                              children))))
+                               children))))
 
 #?(:clj
    (defmacro html [$ component]

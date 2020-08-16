@@ -1,6 +1,18 @@
 (ns rehook.dom.util
   (:require [clojure.string :as str]))
 
+(defn merge-arguments
+  [args extra-args]
+  (let [{:keys [className id]} extra-args]
+    (cond-> args
+      (or id (:id args))
+      (update :id #(or id %))
+
+      (or (:className args) className)
+      (update :className #(if (and % className)
+                            (str % " " className)
+                            (or % className))))))
+
 (def keyword->elem
   (memoize
    (fn [kw]
