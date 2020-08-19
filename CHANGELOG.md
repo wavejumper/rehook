@@ -1,3 +1,9 @@
+## 2.1.8 (August 19, 2020)
+
+### rehook-dom
+
+* Alias `:<>` as `react/Fragment`
+
 ## 2.1.7 (August 19, 2020)
 
 ### rehook-dom
