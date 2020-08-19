@@ -22,13 +22,10 @@ jobs:
       - checkout:
           path: ~/repo
       - node/install
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm run compile-test
-      - run:
-          command: node out/test.js
-            
+      - run: npm install
+      - run: npm run compile-test
+      - run: node out/test.js
+
   rehook_dom_test:
     executor: lein
     working_directory: ~/repo/rehook-dom
