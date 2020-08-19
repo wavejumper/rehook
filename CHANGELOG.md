@@ -1,3 +1,9 @@
+## 2.1.7 (August 19, 2020)
+
+### rehook-dom
+
+* Bugfix: compile-hiccup supports seq as child 
+
 ## 2.1.6 (August 16, 2020)
 
 ### rehook-dom
