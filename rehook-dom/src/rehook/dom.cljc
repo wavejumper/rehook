@@ -62,17 +62,21 @@
   ([$ e props]
    (list $ e props))
 
-  ([$ e props & children]
-   (apply list $ e props (keep (fn [x]
-                                 (cond
-                                   (vector? x)
-                                   (apply compile-hiccup $ x)
+  ([$ e props child]
+   (list $ e props
+         (cond
+           (vector? child)
+           (apply compile-hiccup $ child)
 
-                                   (or (nil? x) (string? x) (number? x))
-                                   x
+           (or (nil? child) (string? child) (number? child))
+           child
 
-                                   :else `(eval-hiccup ~$ ~x)))
-                               children))))
+           :else
+           `(eval-hiccup ~$ ~child))))
+
+  ([$ e props child & children]
+   (let [children (cons child children)]
+     (apply list $ e props (keep (partial compile-hiccup $) children)))))
 
 #?(:clj
    (defmacro html [$ component]
