@@ -1,4 +1,4 @@
-(defproject  rehook/dom "2.1.6"
+(defproject  rehook/dom "2.1.7"
   :description "React component DSL for Clojurescript"
   :url "https://github.com/wavejumper/rehook"
 
