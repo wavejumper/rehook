@@ -7,7 +7,7 @@
   [e ctx $ props-f args & children]
   (cond
     ;; TODO: server-side fragments???
-    (= :> e)
+    (#{:<> :>} e)
     (into [:div {}] e)
 
     (keyword? e)

@@ -7,7 +7,7 @@
 (defn handle-type
   [args e ctx $]
   (cond
-    (= :> e)
+    (#{:> :<>} e)
     [react/Fragment args]
 
     (keyword? e)
