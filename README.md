@@ -148,11 +148,11 @@ The anonymous counterpart is `rehook.dom/ui`
 
 ### fragments
 
-Use the `:>` shorthand:
+Use the `:<>` shorthand:
 
 ```clojure
 (defui fragmented-ui [_ _]
-  [:> {} [:div {} "Div 1"] [:div {} "Div 2"]])
+  [:<> {} [:div {} "Div 1"] [:div {} "Div 2"]])
 ```
 
 ### rehook components
