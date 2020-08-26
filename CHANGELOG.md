@@ -1,3 +1,9 @@
+## 2.1.9 (August 26, 2020)
+
+### rehook-dom
+
+* Add `rehook.dom/as-element` which turns a vector of Hiccup syntax into a React element.
+
 ## 2.1.8 (August 19, 2020)
 
 ### rehook-dom
