@@ -4,7 +4,7 @@
   <groupId>rehook</groupId>
   <artifactId>test</artifactId>
   <packaging>jar</packaging>
-  <version>2.1.8</version>
+  <version>2.1.9</version>
   <name>test</name>
   <description>React Hooks for Clojurescript</description>
   <url>https://github.com/wavejumper/rehook</url>
