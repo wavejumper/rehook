@@ -16,7 +16,7 @@
       [(aget rn (name elem)) (dom.util/merge-arguments args extra-args)])
 
     (util/rehook-component? e)
-    (let [rehook-component (e (assoc ctx :rehook.dom/props args) $)]
+    (let [rehook-component (e (assoc ctx :rehook.dom/props args :rehook.dom/bootstrap $) $)]
       (when-not (aget rehook-component "displayName")
         (aset rehook-component "displayName" (util/display-name e)))
       [rehook-component args])

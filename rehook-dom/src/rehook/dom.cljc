@@ -95,6 +95,20 @@
        `~(apply compile-hiccup $ component)
        `(apply eval-hiccup ~$ ~component))))
 
+(defn rehook-meta
+  [m props _]
+  (assoc m :react/props props))
+
+(defn as-element
+  "Turns a vector of Hiccup syntax into a React element."
+  [ctx form]
+  (if-let [$ (get ctx :rehook.dom/bootstrap)]
+    (eval-hiccup $ form)
+    (if ctx
+      (throw (ex-info "ctx argument to as-element null. Have you passed in the ctx map?" {}))
+      (throw (ex-info "as-element requires :rehook.dom/bootstrap key in ctx map. Are you you using defui?"
+                      {:keys (keys ctx) :ctx ctx})))))
+
 #?(:clj
    (defmacro defui
      [name [ctx props $?] & body]
@@ -107,7 +121,7 @@
                 (let [~ctx (dissoc ctx# :rehook.dom/props)
                       ~$? $#]
                   (fn ~(gensym name) [props#]
-                    (let [~props (with-meta (get ctx# :rehook.dom/props {}) {:react/props props#})]
+                    (let [~props (vary-meta (get ctx# :rehook.dom/props {}) rehook-meta props# ctx#)]
                       ~@body))))))
 
        (do (s/assert* ::defui [name [ctx props] body])
@@ -121,7 +135,7 @@
                   (let [~ctx (dissoc ctx# :rehook.dom/props)
                         ~$ $#]
                     (fn ~(gensym name) [props#]
-                      (let [~props (with-meta (get ctx# :rehook.dom/props {}) {:react/props props#})]
+                      (let [~props (vary-meta (get ctx# :rehook.dom/props {}) rehook-meta props# ctx#)]
                         ~@effects
                         (html ~$ ~hiccup)))))))))))
 
@@ -136,7 +150,7 @@
              (let [~ctx (dissoc ctx# :rehook.dom/props)
                    ~$? $#]
                (fn ~(gensym id) [props#]
-                 (let [~props (with-meta (get ctx# :rehook.dom/props {}) {:react/props props#})]
+                 (let [~props (vary-meta (get ctx# :rehook.dom/props {}) rehook-meta props# ctx#)]
                    ~@body))))
            {:rehook/component true
             :rehook/name      ~(str id)}))
@@ -151,7 +165,7 @@
              (let [~ctx (dissoc ctx# :rehook.dom/props)
                    ~$ $#]
                (fn ~(gensym id) [props#]
-                 (let [~props (with-meta (get ctx# :rehook.dom/props {}) {:react/props props#})]
+                 (let [~props (vary-meta (get ctx# :rehook.dom/props {}) rehook-meta props# ctx#)]
                    ~@effects
                    (html ~$ ~hiccup)))))
            {:rehook/component true

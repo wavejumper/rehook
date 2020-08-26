@@ -17,7 +17,7 @@
 
     (util/rehook-component? e)
     (let [props (props-f args)
-          ret   (e (assoc ctx :rehook.dom/props props) $)]
+          ret   (e (assoc ctx :rehook.dom/props props :rehook.dom/bootstrap $) $)]
       (ret props))
 
     (fn? e)

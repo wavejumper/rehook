@@ -77,18 +77,18 @@
 
 
 (dom/defui nested-child-component [ctx _ $]
-  (dom/html $ [:div ctx "foo"] ))
+  (dom/html $ [:div (select-keys ctx [:my]) "foo"] ))
 
 (dom/defui nested-conditional-component [ctx _ $]
-  (dom/html $ [:div ctx
+  (dom/html $ [:div (select-keys ctx [:my])
                (when true
-                 [:div ctx
+                 [:div (select-keys ctx [:my])
                   (when true
                     [(dom/ui [ctx _ $]
-                       (dom/html $ [:div ctx "Hello world"]))])
+                       (dom/html $ [:div (select-keys ctx [:my]) "Hello world"]))])
                   (when true
                     [(dom/ui [ctx _]
-                       [:div ctx "Hello world 2 arity"])])
+                       [:div (select-keys ctx [:my]) "Hello world 2 arity"])])
                   "---"
                   nil
                   (when true
@@ -129,3 +129,10 @@
           [:div {:class "c"}]]
          (server/bootstrap {:my :ctx} (fn [x _] x) identity child-as-list-static)
          (server/bootstrap {:my :ctx} (fn [x _] x) identity child-as-list))))
+
+(dom/defui as-element [ctx _]
+  (dom/as-element ctx [:div {} "Foo"]))
+
+(deftest as-element-test
+  (is (= (server/bootstrap {:my :ctx} (fn [x _] x) identity as-element)
+         [:div {} "Foo"])))
