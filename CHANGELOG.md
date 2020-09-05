@@ -1,3 +1,10 @@
+## 2.1.10 (September 5, 2020)
+
+### rehook-dom
+
+* Better support children within rehook components
+* Add `rehook.util/child-seq` which returns a JS array of children
+
 ## 2.1.9 (August 26, 2020)
 
 ### rehook-dom
