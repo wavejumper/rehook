@@ -204,6 +204,22 @@ Same as rehook components. Reference the component directly:
   [child2]]
 ```
 
+#### Working with children in rehook components
+
+```clojure
+(require '[rehook.util :as util])
+
+(defui parent [_ props]
+  [:div {} 
+    (for [child (util/child-seq props)]
+      [child {:onClick #(js/alert "Extra props merged into child!")}])])
+
+...
+
+[parent {} 
+  [:div {:style {:color "pink"}} "I am a child"]]
+```
+
 ### hiccup-free
 
 You can opt-out of hiuccup templating by passing a third argument (the render fn) to `defui`:
