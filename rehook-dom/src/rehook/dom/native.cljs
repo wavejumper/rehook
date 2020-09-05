@@ -27,22 +27,28 @@
   ([ctx ctx-f props-f e]
    (let [ctx (ctx-f ctx e)
          [elem args] (handle-type {} e ctx (partial bootstrap ctx ctx-f props-f))]
-     (when elem
-       (react/createElement
-        elem
-        (props-f (if (contains? args :rehook/id)
-                   (dissoc args :rehook/id)
-                   args))))))
+     (let [props (props-f (if (contains? args :rehook/id)
+                            (dissoc args :rehook/id)
+                            args))]
+       (when elem
+         (if (react/isValidElement elem)
+           (let [props' (doto (obj/clone (aget elem "props"))
+                          (obj/extend props))]
+             (react/cloneElement elem props'))
+           (react/createElement elem props))))))
 
   ([ctx ctx-f props-f e args]
    (let [ctx (ctx-f ctx e)]
      (let [[elem args] (handle-type args e ctx (partial bootstrap ctx ctx-f props-f))]
-       (when elem
-         (react/createElement
-          elem
-          (props-f (if (contains? args :rehook/id)
-                     (dissoc args :rehook/id)
-                     args)))))))
+       (let [props (props-f (if (contains? args :rehook/id)
+                              (dissoc args :rehook/id)
+                              args))]
+         (when elem
+           (if (react/isValidElement elem)
+             (let [props' (doto (obj/clone (aget elem "props"))
+                            (obj/extend props))]
+               (react/cloneElement elem props'))
+             (react/createElement elem props)))))))
 
   ([ctx ctx-f props-f e args child]
    (let [ctx (ctx-f ctx e)
