@@ -1,3 +1,9 @@
+## 2.1.11 (September 6, 2020)
+
+### rehook-dom 
+
+* Props map now optional, eg: `[:div [:div "Hello world"]]` is now considered valid
+
 ## 2.1.10 (September 5, 2020)
 
 ### rehook-dom
