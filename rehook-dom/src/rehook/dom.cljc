@@ -38,62 +38,32 @@
      :else ($ e)))
 
   ([$ e props]
-   ($ e props))
+   (if (map? props)
+     ($ e props)
+     (eval-hiccup $ e {} props)))
 
   ([$ e props & children]
-   (apply $ e props
-          (->> children
-               (mapcat (fn [child]
-                         (cond
-                           (and (vector? child) (seq child))
-                           [(apply eval-hiccup $ child)]
+   (if (map? props)
+     (apply $ e props
+            (->> children
+                 (mapcat (fn [child]
+                           (cond
+                             (and (vector? child) (seq child))
+                             [(apply eval-hiccup $ child)]
 
-                           (seq? child)
-                           (map #(eval-hiccup $ %) child)
+                             (seq? child)
+                             (map #(eval-hiccup $ %) child)
 
-                           :else
-                           [(eval-hiccup $ child)])))
-               (filter identity)))))
+                             :else
+                             [(eval-hiccup $ child)])))
+                 (filter identity)))
 
-(defn compile-hiccup
-  ([$ e]
-   (list $ e))
-
-  ([$ e props]
-   (list $ e props))
-
-  ([$ e props child]
-   (list $ e props
-         (cond
-           (vector? child)
-           (apply compile-hiccup $ child)
-
-           (or (nil? child) (string? child) (number? child))
-           child
-
-           :else
-           `(eval-hiccup ~$ ~child))))
-
-  ([$ e props child & children]
-   (let [children (cons child children)]
-     (apply list $ e props (keep (fn [e]
-                                   (cond
-                                     (vector? e)
-                                     (apply compile-hiccup $ e)
-
-                                     (or (nil? e) (string? e) (number? e))
-                                     e
-
-                                     :else
-                                     `(eval-hiccup ~$ ~e)))
-                                 children)))))
+     (apply eval-hiccup $ e {} (cons props children)))))
 
 #?(:clj
    (defmacro html [$ component]
      (s/assert* ::html [$ component])
-     (if (vector? component)
-       `~(apply compile-hiccup $ component)
-       `(apply eval-hiccup ~$ ~component))))
+     `(apply eval-hiccup ~$ ~component)))
 
 (defn rehook-meta
   [m props _]
