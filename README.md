@@ -334,7 +334,8 @@ TODO: add cljfmt instructions
 Add this to your `.clj-kondo/config.edn` file:
 
 ```
-TODO: add clj-kondo instructions
+{:lint-as {rehook.dom/defui clojure.core/defn
+           rehook.dom/ui    clojure.core/fn}}
 ```
 
 ## Testing
