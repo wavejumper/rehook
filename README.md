@@ -326,7 +326,8 @@ This can be incredibly useful context to pass to your logging/metrics library!
 Add this to your cljfmt config:
 
 ```clojure
-TODO: add cljfmt instructions
+{rehook.dom/defui [[:inner 0]]
+ rehook.dom/ui    [[:inner 0]]}
 ```
 
 ### clj-kondo (calva/etc)
