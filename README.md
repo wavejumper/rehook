@@ -18,6 +18,7 @@ Its modular design, and guiding philosophy has already enabled some rich tooling
 
 ## Example apps
 
+* [cljspad](https://cljspad.dev)
 * [reax-synth](https://github.com/wavejumper/reax/tree/master/examples/synth) -- react native oscillator (demos re-frame like abstractions, integrant, etc)
 * [todomvc](https://github.com/wavejumper/rehook/tree/master/examples/todomvc)
 * [rehook-test](https://github.com/wavejumper/rehook/tree/master/rehook-test)
