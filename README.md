@@ -286,7 +286,7 @@ You can use the `rehook.dom.native/component-provider` fn if you directly call [
   {:dispatch (fn [& _] (js/console.log "TODO: implement dispatch fn..."))})
 
 (defn main []
-  (.registerComponent AppRegistry "my-app" (dom/component-provider (system) app))
+  (.registerComponent AppRegistry "my-app" (dom/component-provider (system) app)))
 ```
 
 Alternatively, if you don't have access to the `AppRegistry`, you can use the `rehook.dom.native/bootstrap` fn instead - which will return a valid React element
